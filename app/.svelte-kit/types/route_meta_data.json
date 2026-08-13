@@ -1,0 +1,6 @@
+{
+	"/": [],
+	"/api/leaderboard": [
+		"src/routes/api/leaderboard/+server.ts"
+	]
+}

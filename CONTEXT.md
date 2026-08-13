@@ -31,28 +31,32 @@ A **mobile-first web app** that turns rote acronym memorization into an addictiv
 
 ```
 acronym-quiz/
-├── src/
-│   ├── app.css                  # Global styles, design tokens, CSS vars
-│   ├── app.html                 # HTML shell
-│   ├── lib/
-│   │   ├── components/
-│   │   │   ├── GameCard.svelte       # Core quiz card — question, answer input, feedback
-│   │   │   ├── Navbar.svelte         # Score, streak, multiplier display + nav actions
-│   │   │   ├── LeaderboardSheet.svelte  # Bottom sheet — edge leaderboard via D1
-│   │   │   └── AcronymListSheet.svelte  # Bottom sheet — full acronym dictionary + mastery status
-│   │   ├── data/
-│   │   │   └── acronyms.ts       # Static data: all 118 PhilNITS acronyms
-│   │   ├── audio.ts              # Web Audio API — sound effects (correct, streak, bonus)
-│   │   └── index.ts              # Lib barrel exports
-│   └── routes/
-│       ├── +layout.svelte        # Root layout
-│       ├── +page.svelte          # Main game page — state orchestration
-│       └── api/
-│           └── leaderboard/      # Edge API route for D1 leaderboard reads/writes
+├── app/
+│   ├── src/
+│   │   ├── app.css                  # Global styles, design tokens, CSS vars
+│   │   ├── app.html                 # HTML shell
+│   │   ├── lib/
+│   │   │   ├── components/
+│   │   │   │   ├── GameCard.svelte       # Core quiz card — question, answer input, feedback
+│   │   │   │   ├── Navbar.svelte         # Score, streak, multiplier display + nav actions
+│   │   │   │   ├── LeaderboardSheet.svelte  # Bottom sheet — edge leaderboard via D1
+│   │   │   │   └── AcronymListSheet.svelte  # Bottom sheet — full acronym dictionary + mastery status
+│   │   │   ├── data/
+│   │   │   │   └── acronyms.ts       # Static data: all 118 PhilNITS acronyms
+│   │   │   ├── audio.ts              # Web Audio API — sound effects (correct, streak, bonus)
+│   │   │   └── index.ts              # Lib barrel exports
+│   │   └── routes/
+│   │       ├── +layout.svelte        # Root layout
+│   │       ├── +page.svelte          # Main game page — state orchestration
+│   │       └── api/
+│   │           └── leaderboard/      # Edge API route for D1 leaderboard reads/writes
+│   ├── static/
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── wrangler.jsonc                # Cloudflare Workers / Pages config
 ├── research/
 │   └── gamification_ux_research.md  # UX/gamification research notes
 ├── migrations/                   # D1 SQL migrations (leaderboard schema)
-├── wrangler.jsonc                # Cloudflare Workers / Pages config
 └── CONTEXT.md                   # This file
 ```
 

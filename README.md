@@ -1,42 +1,50 @@
-# sv
+# acronym blitz
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+a gamified flashcard quiz for mastering all 118 philnits it passport exam acronyms. built to feel like a speed run so that it doesn't feel demanding to keep acronyms in mind
 
-## Creating a project
+made from sir tse's acronym list in the philnits facebook group
 
-If you're seeing this, you've probably already done this step. Congrats!
+## stack
+
+- **sveltekit** (svelte 5 + runes) — cloudflare pages adapter
+- **cloudflare workers + d1** — edge runtime, sqlite leaderboard
+- **typescript**, vanilla css, lucide icons
+
+## how it works
+
+fill-in-the-blank speed runs. type the full acronym expansion, get instant feedback. build streaks for score multipliers. mastery is tracked in `localStorage` so it persists across sessions.
+
+**multipliers:**
+- 3+ streak → 1.5×
+- 5+ streak → 2×
+- 10+ streak → 3×
+
+unmastered acronyms are prioritized. once you've mastered all 118, it loops back.
+
+## dev
 
 ```sh
-# create a new project
-npx sv create my-app
-```
-
-To recreate this project with the same configuration:
-
-```sh
-# recreate this project
-npx sv@0.17.0 create --template minimal --types ts --add sveltekit-adapter="adapter:cloudflare+cfTarget:pages" --install npm ./
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+**preview with cloudflare workers:**
 
-To create a production version of your app:
+```sh
+npm run preview
+```
+
+**build:**
 
 ```sh
 npm run build
 ```
 
-You can preview the production build with `npm run preview`.
+## features
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- fill-in-the-blank quiz — 118 philnits acronyms
+- streak multiplier system
+- mastery tracking (localStorage)
+- edge leaderboard (cloudflare d1)
+- synthesized audio feedback (web audio api, no external files)
+- mobile-first dark ui
