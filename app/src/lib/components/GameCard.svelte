@@ -40,7 +40,7 @@
 
 	function focusInput() {
 		const el = document.getElementById('meaning-text-input');
-		if (el) (el as HTMLInputElement).focus();
+		if (el) (el as HTMLInputElement).focus({ preventScroll: true });
 	}
 
 	function checkAnswer() {
@@ -49,16 +49,42 @@
 		evaluateResult(result.status, result.earnedRatio);
 	}
 
+	function handleSkip() {
+		if (isSubmitted) return;
+		evaluateResult('wrong', 0);
+	}
+
 	function handleKeyDown(e: KeyboardEvent) {
 		if (e.key === 'Enter') {
+			e.preventDefault();
 			if (isSubmitted) handleNext();
-			else checkAnswer();
+			else if (inputValue.trim()) checkAnswer();
+			return;
 		}
+
+		if (isSubmitted) {
+			e.preventDefault();
+		}
+	}
+
+	function handleBeforeInput(e: InputEvent) {
+		if (isSubmitted) {
+			e.preventDefault();
+		}
+	}
+
+	function handleInput(e: Event) {
+		if (isSubmitted) {
+			e.preventDefault();
+			return;
+		}
+		inputValue = (e.target as HTMLInputElement).value;
 	}
 
 	function evaluateResult(status: GradeStatus, earnedRatio: number) {
 		isSubmitted = true;
 		resultStatus = status;
+		focusInput();
 
 		const basePoints = Math.max(20, 100 + streak * 25 - hintLevel * 20);
 
@@ -85,11 +111,13 @@
 		if (hintLevel < 2) {
 			hintLevel += 1;
 			playPopSound();
+			focusInput();
 		}
 	}
 
 	function handleNext() {
 		if (onnext) onnext();
+		focusInput();
 	}
 </script>
 
@@ -138,17 +166,25 @@
 			type="text"
 			class="meaning-input {isSubmitted && resultStatus ? resultStatus : ''}"
 			placeholder="Enter meaning..."
-			bind:value={inputValue}
-			disabled={isSubmitted}
+			value={inputValue}
+			oninput={handleInput}
+			onbeforeinput={handleBeforeInput}
 			onkeydown={handleKeyDown}
 			autocomplete="off"
 			autocorrect="off"
+			enterkeyhint={isSubmitted ? 'next' : 'go'}
 		/>
 		{#if isSubmitted}
-			<button class="action-btn next-btn" onclick={handleNext}>NEXT ➔</button>
-		{:else}
-			<button class="action-btn submit-btn" onclick={checkAnswer} disabled={!inputValue.trim()}>
+			<button class="action-btn next-btn" onpointerdown={(e) => e.preventDefault()} onclick={handleNext}>
+				NEXT ➔
+			</button>
+		{:else if inputValue.trim()}
+			<button class="action-btn submit-btn" onpointerdown={(e) => e.preventDefault()} onclick={checkAnswer}>
 				SUBMIT
+			</button>
+		{:else}
+			<button class="action-btn skip-btn" onpointerdown={(e) => e.preventDefault()} onclick={handleSkip}>
+				SKIP
 			</button>
 		{/if}
 	</div>
@@ -157,6 +193,7 @@
 	<div class="card-footer">
 		<button
 			class="hint-btn"
+			onpointerdown={(e) => e.preventDefault()}
 			onclick={triggerHint}
 			disabled={isSubmitted || hintLevel >= 2}
 			style:visibility={isSubmitted ? 'hidden' : 'visible'}
@@ -186,6 +223,8 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0;
+		transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, border-color 0.2s ease;
+		will-change: transform;
 	}
 
 	.card-header {
@@ -309,40 +348,57 @@
 		border-color: var(--cyan);
 	}
 
+	.meaning-input:read-only {
+		cursor: default;
+		opacity: 0.9;
+	}
+
 	.meaning-input.correct {
 		border-color: var(--green);
 		color: var(--green);
+		caret-color: transparent;
 	}
 
 	.meaning-input.close {
 		border-color: var(--cyan);
 		color: var(--cyan);
+		caret-color: transparent;
 	}
 
 	.meaning-input.almost {
 		border-color: var(--yellow-text);
 		color: var(--yellow-text);
+		caret-color: transparent;
 	}
 
 	.meaning-input.wrong {
 		border-color: var(--red);
 		color: var(--red);
+		caret-color: transparent;
 	}
 
-	/* Shared base for submit + next — same size, same position */
+	/* Shared base for submit + next + skip — same size, same position */
 	.action-btn {
 		flex-shrink: 0;
 		font-family: var(--font-sans);
 		font-weight: 700;
 		font-size: 0.82rem;
-		padding: 0 20px;
+		padding: 0 18px;
+		min-width: 90px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		cursor: pointer;
 		border-radius: var(--radius-md);
 		letter-spacing: 0.04em;
 		white-space: nowrap;
 		height: auto;
 		border: 1px solid transparent;
-		transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
+		transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+	}
+
+	.action-btn:active {
+		transform: scale(0.98);
 	}
 
 	.submit-btn {
@@ -351,14 +407,22 @@
 		color: var(--text-primary);
 	}
 
-	.submit-btn:hover:not(:disabled) {
+	.submit-btn:hover {
 		background: var(--cyan);
 		color: #000;
 	}
 
-	.submit-btn:disabled {
-		opacity: 0.4;
-		cursor: default;
+	.skip-btn {
+		background: transparent;
+		border-color: var(--border);
+		color: var(--text-muted);
+		font-weight: 600;
+	}
+
+	.skip-btn:hover {
+		background: var(--bg-hover);
+		border-color: var(--border-strong);
+		color: var(--text-secondary);
 	}
 
 	.next-btn {
@@ -411,5 +475,46 @@
 		font-size: 0.8rem;
 		color: var(--yellow-text);
 		font-weight: 500;
+	}
+
+	@media (max-width: 640px) {
+		.card-container {
+			padding: 20px 18px 16px;
+			border-radius: var(--radius);
+		}
+
+		.card-header {
+			margin-bottom: 12px;
+		}
+
+		.prompt-section {
+			margin-bottom: 14px;
+			gap: 4px;
+		}
+
+		.acronym-hero-text {
+			font-size: 2.25rem;
+		}
+
+		.info-zone {
+			min-height: 56px;
+			margin-bottom: 14px;
+			padding-left: 12px;
+		}
+
+		.action-row {
+			margin-bottom: 12px;
+		}
+
+		.meaning-input {
+			padding: 10px 12px;
+			font-size: 16px;
+		}
+
+		.action-btn {
+			padding: 0 14px;
+			font-size: 0.8rem;
+			min-width: 78px;
+		}
 	}
 </style>

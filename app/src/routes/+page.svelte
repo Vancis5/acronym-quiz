@@ -143,7 +143,12 @@
 		display: flex;
 		flex-direction: column;
 		height: 100%;
+		height: var(--app-height, 100dvh);
 		overflow: hidden;
+		position: relative;
+		z-index: 1;
+		transition: height 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+		will-change: height;
 	}
 
 	.game-area {
@@ -152,11 +157,14 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 24px 20px;
+		padding: 36px 20px 24px;
 		max-width: 640px;
 		margin: 0 auto;
 		width: 100%;
 		gap: 20px;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		transition: padding 0.28s cubic-bezier(0.16, 1, 0.3, 1), gap 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
 	.session-bar {
@@ -169,6 +177,8 @@
 		padding: 8px 0;
 		gap: 28px;
 		width: 100%;
+		flex-shrink: 0;
+		transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 	}
 
 	.reset-btn {
@@ -186,5 +196,19 @@
 	.reset-btn:hover {
 		color: var(--red);
 		background: var(--bg-hover);
+	}
+
+	@media (max-width: 640px) {
+		.game-area {
+			padding: 28px 16px 14px;
+			gap: 12px;
+			justify-content: center;
+		}
+
+		.session-bar {
+			padding: 4px 0;
+			gap: 20px;
+			font-size: 0.8rem;
+		}
 	}
 </style>

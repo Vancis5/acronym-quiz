@@ -45,7 +45,7 @@ export const ACRONYMS: AcronymItem[] = [
 	{ id: 36, acronym: "EUC", meaning: "Extended Unix Code", category: "Software", hint: "character encoding so Unix terminals can handle Japanese and Asian text" },
 	{ id: 37, acronym: "EVM", meaning: "Earned Value Management", category: "Management", hint: "project math checking if you are burning cash too fast or falling behind schedule" },
 	{ id: 38, acronym: "FAQ", meaning: "Frequently Asked Questions", category: "General", hint: "cheat sheet of common questions people always ask" },
-	{ id: 39, acronym: "Fintech", meaning: "Financial Technology", category: "Management", hint: "marrying code with money like Cash App or crypto wallets" },
+	{ id: 39, acronym: "Fintech", meaning: "Financial Technology", category: "Management", hint: "marrying code with money like GCash or crypto wallets" },
 	{ id: 40, acronym: "FTP", meaning: "File Transfer Protocol", category: "Networking", hint: "old reliable way to sling files between servers over the network" },
 
 	{ id: 41, acronym: "GPS", meaning: "Global Positioning System", category: "Hardware", hint: "satellites in space telling Google Maps where you are lost at" },

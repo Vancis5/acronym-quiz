@@ -912,28 +912,28 @@ var ACRONYMS = [
 		acronym: "ANSI",
 		meaning: "American National Standards Institute",
 		category: "General",
-		hint: "the crew in the us deciding what standard fits where"
+		hint: "the crew in the U.S. deciding what standard fits where"
 	},
 	{
 		id: 5,
 		acronym: "AR",
 		meaning: "Augmented Reality",
 		category: "Software",
-		hint: "slapping digital stuff on top of the real world like pokemon go"
+		hint: "slapping digital stuff on top of the real world like Pokemon GO"
 	},
 	{
 		id: 6,
 		acronym: "ASCII",
 		meaning: "American Standard Code for Information Interchange",
 		category: "Software",
-		hint: "the og table translating letters and symbols into numbers for pcs"
+		hint: "the OG table translating letters and symbols into numbers for PCs"
 	},
 	{
 		id: 7,
 		acronym: "ASP",
 		meaning: "Application Service Provider / Active Server Pages",
 		category: "Software",
-		hint: "old school microsoft way to make web pages dynamic or renting apps online"
+		hint: "old school Microsoft way to make web pages dynamic or renting apps online"
 	},
 	{
 		id: 8,
@@ -954,14 +954,14 @@ var ACRONYMS = [
 		acronym: "BIOS",
 		meaning: "Basic Input/Output System",
 		category: "Hardware",
-		hint: "the very first thing your motherboard wakes up with before booting your os"
+		hint: "the very first thing your motherboard wakes up with before booting your OS"
 	},
 	{
 		id: 11,
 		acronym: "BLE",
 		meaning: "Bluetooth Low Energy",
 		category: "Networking",
-		hint: "bluetooth on a diet so your earbuds and fitness bands dont die in five mins"
+		hint: "Bluetooth on a diet so your earbuds and fitness bands dont die in five mins"
 	},
 	{
 		id: 12,
@@ -996,7 +996,7 @@ var ACRONYMS = [
 		acronym: "CEN",
 		meaning: "European Committee for Standardization",
 		category: "General",
-		hint: "euro squad setting technical rules so everything works across europe"
+		hint: "Euro squad setting technical rules so everything works across Europe"
 	},
 	{
 		id: 17,
@@ -1017,7 +1017,7 @@ var ACRONYMS = [
 		acronym: "CIO",
 		meaning: "Chief Information Officer",
 		category: "Management",
-		hint: "the tech boss running all the it systems and company gear"
+		hint: "the tech boss running all the IT systems and company gear"
 	},
 	{
 		id: 20,
@@ -1038,7 +1038,7 @@ var ACRONYMS = [
 		acronym: "CMS",
 		meaning: "Content Management System",
 		category: "Software",
-		hint: "platform to run blogs and websites without touching a line of code like wordpress"
+		hint: "platform to run blogs and websites without touching a line of code like WordPress"
 	},
 	{
 		id: 23,
@@ -1080,14 +1080,14 @@ var ACRONYMS = [
 		acronym: "DHCP",
 		meaning: "Dynamic Host Configuration Protocol",
 		category: "Networking",
-		hint: "the router feature that automatically gives your phone an ip address"
+		hint: "the router feature that automatically gives your phone an IP address"
 	},
 	{
 		id: 29,
 		acronym: "DNS",
 		meaning: "Domain Name System",
 		category: "Networking",
-		hint: "internet phonebook turning website names into ip addresses"
+		hint: "internet phonebook turning website names into IP addresses"
 	},
 	{
 		id: 30,
@@ -1108,7 +1108,7 @@ var ACRONYMS = [
 		acronym: "EBCDIC",
 		meaning: "Extended Binary Coded Decimal Interchange Code",
 		category: "Software",
-		hint: "ancient character system ibm used on big clunky mainframes"
+		hint: "ancient character system IBM used on big clunky mainframes"
 	},
 	{
 		id: 33,
@@ -1129,14 +1129,14 @@ var ACRONYMS = [
 		acronym: "ESSID",
 		meaning: "Extended Service Set Identifier",
 		category: "Networking",
-		hint: "the wifi name you tap on when you are hunting for free internet"
+		hint: "the Wi-Fi name you tap on when you are hunting for free internet"
 	},
 	{
 		id: 36,
 		acronym: "EUC",
 		meaning: "Extended Unix Code",
 		category: "Software",
-		hint: "character encoding so unix terminals can handle japanese and asian text"
+		hint: "character encoding so Unix terminals can handle Japanese and Asian text"
 	},
 	{
 		id: 37,
@@ -1157,7 +1157,7 @@ var ACRONYMS = [
 		acronym: "Fintech",
 		meaning: "Financial Technology",
 		category: "Management",
-		hint: "marrying code with money like cash app or crypto wallets"
+		hint: "marrying code with money like Cash App or crypto wallets"
 	},
 	{
 		id: 40,
@@ -1171,7 +1171,7 @@ var ACRONYMS = [
 		acronym: "GPS",
 		meaning: "Global Positioning System",
 		category: "Hardware",
-		hint: "satellites in space telling google maps where you are lost at"
+		hint: "satellites in space telling Google Maps where you are lost at"
 	},
 	{
 		id: 42,
@@ -1192,7 +1192,7 @@ var ACRONYMS = [
 		acronym: "HDMI",
 		meaning: "High-Definition Multimedia Interface",
 		category: "Hardware",
-		hint: "the cable plugging your pc or console into your monitor with audio and video"
+		hint: "the cable plugging your PC or console into your monitor with audio and video"
 	},
 	{
 		id: 45,
@@ -1220,7 +1220,7 @@ var ACRONYMS = [
 		acronym: "IEEE",
 		meaning: "Institute of Electrical and Electronics Engineers",
 		category: "General",
-		hint: "the engineer guild that cooks up standards like wifi and ethernet"
+		hint: "the engineer guild that cooks up standards like Wi-Fi and Ethernet"
 	},
 	{
 		id: 49,
@@ -1234,7 +1234,7 @@ var ACRONYMS = [
 		acronym: "IoT",
 		meaning: "Internet of Things",
 		category: "Hardware",
-		hint: "putting wifi and sensors on everyday appliances like toasters and lightbulbs"
+		hint: "putting Wi-Fi and sensors on everyday appliances like toasters and lightbulbs"
 	},
 	{
 		id: 51,
@@ -1276,28 +1276,28 @@ var ACRONYMS = [
 		acronym: "ITIL",
 		meaning: "Information Technology Infrastructure Library",
 		category: "Management",
-		hint: "textbook recipe of best practices for running corporate it smoothly"
+		hint: "textbook recipe of best practices for running corporate IT smoothly"
 	},
 	{
 		id: 57,
 		acronym: "ITSM",
 		meaning: "Information Technology Service Management (ISO 20000)",
 		category: "Management",
-		hint: "organizing how tech support and it services get delivered to workers"
+		hint: "organizing how tech support and IT services get delivered to workers"
 	},
 	{
 		id: 58,
 		acronym: "ITU",
 		meaning: "International Telecommunication Union",
 		category: "Networking",
-		hint: "un agency divvying up global radio waves and telecom rules"
+		hint: "UN agency divvying up global radio waves and telecom rules"
 	},
 	{
 		id: 59,
 		acronym: "JIS",
 		meaning: "Japanese Industrial Standards",
 		category: "General",
-		hint: "japan's official stamp of approval on industrial manufacturing specs"
+		hint: "Japan's official stamp of approval on industrial manufacturing specs"
 	},
 	{
 		id: 60,
@@ -1339,14 +1339,14 @@ var ACRONYMS = [
 		acronym: "MDM",
 		meaning: "Mobile Device Management",
 		category: "Management",
-		hint: "software corporate it uses to lock down and wipe company phones remotely"
+		hint: "software corporate IT uses to lock down and wipe company phones remotely"
 	},
 	{
 		id: 66,
 		acronym: "MIDI",
 		meaning: "Musical Instrument Digital Interface",
 		category: "Hardware",
-		hint: "digital language letting synths and electronic pianos talk to your pc"
+		hint: "digital language letting synths and electronic pianos talk to your PC"
 	},
 	{
 		id: 67,
@@ -1514,7 +1514,7 @@ var ACRONYMS = [
 		acronym: "SaaS",
 		meaning: "Software as a Service",
 		category: "Software",
-		hint: "apps you run in your browser on a monthly subscription like figma or spotify"
+		hint: "apps you run in your browser on a monthly subscription like Figma or Spotify"
 	},
 	{
 		id: 91,
@@ -1528,14 +1528,14 @@ var ACRONYMS = [
 		acronym: "SDGs",
 		meaning: "Sustainable Development Goals",
 		category: "Management",
-		hint: "seventeen global goals from the un to tackle poverty and save the planet"
+		hint: "seventeen global goals from the UN to tackle poverty and save the planet"
 	},
 	{
 		id: 93,
 		acronym: "SEO",
 		meaning: "Search Engine Optimization",
 		category: "Software",
-		hint: "tricks to make google put your site at the top of search results"
+		hint: "tricks to make Google put your site at the top of search results"
 	},
 	{
 		id: 94,
@@ -1584,7 +1584,7 @@ var ACRONYMS = [
 		acronym: "SNS",
 		meaning: "Social Networking Service",
 		category: "Software",
-		hint: "apps like x, instagram, and tiktok where you post and scroll feeds"
+		hint: "apps like X, Instagram, and TikTok where you post and scroll feeds"
 	},
 	{
 		id: 101,
@@ -1640,7 +1640,7 @@ var ACRONYMS = [
 		acronym: "TLS",
 		meaning: "Transport Layer Security",
 		category: "Security",
-		hint: "modern encryption standard protecting https connections everywhere"
+		hint: "modern encryption standard protecting HTTPS connections everywhere"
 	},
 	{
 		id: 109,
@@ -1668,28 +1668,28 @@ var ACRONYMS = [
 		acronym: "UNESCO",
 		meaning: "United Nations Educational, Scientific and Cultural Org.",
 		category: "General",
-		hint: "un squad preserving world heritage sites, science, and cultural history"
+		hint: "UN squad preserving world heritage sites, science, and cultural history"
 	},
 	{
 		id: 113,
 		acronym: "UPS",
 		meaning: "Uninterruptible Power Supply",
 		category: "Hardware",
-		hint: "backup battery brick that keeps your pc alive during a blackout"
+		hint: "backup battery brick that keeps your PC alive during a blackout"
 	},
 	{
 		id: 114,
 		acronym: "VR",
 		meaning: "Virtual Reality",
 		category: "Software",
-		hint: "strapping a headset to your face to dive into a 3d digital world"
+		hint: "strapping a headset to your face to dive into a 3D digital world"
 	},
 	{
 		id: 115,
 		acronym: "W3C",
 		meaning: "World Wide Web Consortium",
 		category: "Networking",
-		hint: "international group setting the core standards for html and css"
+		hint: "international group setting the core standards for HTML and CSS"
 	},
 	{
 		id: 116,
@@ -1703,14 +1703,14 @@ var ACRONYMS = [
 		acronym: "WHO",
 		meaning: "World Health Organization",
 		category: "General",
-		hint: "un health agency tracking global diseases and outbreaks"
+		hint: "UN health agency tracking global diseases and outbreaks"
 	},
 	{
 		id: 118,
 		acronym: "WPA",
 		meaning: "Wi-Fi Protected Access",
 		category: "Security",
-		hint: "security protocol stopping neighbors from leeching your home wifi"
+		hint: "security protocol stopping neighbors from leeching your home Wi-Fi"
 	}
 ];
 //#endregion

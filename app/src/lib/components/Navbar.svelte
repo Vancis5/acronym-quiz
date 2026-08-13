@@ -150,6 +150,13 @@
 		border-bottom: 1px solid var(--border);
 		padding: 0 20px;
 		width: 100%;
+		flex-shrink: 0;
+		position: sticky;
+		top: 0;
+		z-index: 20;
+		background: color-mix(in srgb, var(--bg) 78%, transparent);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
 	}
 
 	.nav-section {
