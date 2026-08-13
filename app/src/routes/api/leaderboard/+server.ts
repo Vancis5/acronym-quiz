@@ -10,7 +10,13 @@ export interface LeaderboardEntry {
 }
 
 // In-memory fallback for local dev when D1 isn't bound (persisted on globalThis to survive Vite HMR)
-const INITIAL_FALLBACK_LEADERBOARD: LeaderboardEntry[] = [];
+const INITIAL_FALLBACK_LEADERBOARD: LeaderboardEntry[] = [
+	{ id: '1', name: 'PhilNITS_God', score: 1250, max_streak: 18, accuracy: 98, created_at: new Date().toISOString() },
+	{ id: '2', name: 'ByteMaster', score: 980, max_streak: 12, accuracy: 92, created_at: new Date().toISOString() },
+	{ id: '3', name: 'CyberSamurai', score: 820, max_streak: 9, accuracy: 88, created_at: new Date().toISOString() },
+	{ id: '4', name: 'HexRider', score: 650, max_streak: 7, accuracy: 84, created_at: new Date().toISOString() },
+	{ id: '5', name: 'AgileNinja', score: 510, max_streak: 5, accuracy: 80, created_at: new Date().toISOString() }
+];
 
 declare global {
 	var __dev_leaderboard: LeaderboardEntry[] | undefined;
@@ -26,17 +32,25 @@ function getFallbackStore(): LeaderboardEntry[] {
 // Auto-create D1 table if not initialized
 async function ensureLeaderboardTable(db: D1Database): Promise<void> {
 	try {
-		await db.exec(`
-			CREATE TABLE IF NOT EXISTS leaderboard (
-				id TEXT PRIMARY KEY,
-				name TEXT NOT NULL,
-				score INTEGER NOT NULL,
-				max_streak INTEGER NOT NULL,
-				accuracy REAL NOT NULL,
-				created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-			);
-			CREATE INDEX IF NOT EXISTS idx_leaderboard_score ON leaderboard (score DESC);
-		`);
+		await db
+			.prepare(
+				'CREATE TABLE IF NOT EXISTS leaderboard (id TEXT PRIMARY KEY, name TEXT NOT NULL, score INTEGER NOT NULL, max_streak INTEGER NOT NULL, accuracy REAL NOT NULL, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP)'
+			)
+			.run();
+		await db
+			.prepare('CREATE INDEX IF NOT EXISTS idx_leaderboard_score ON leaderboard (score DESC)')
+			.run();
+
+		// Seed initial funny placeholders if table is empty
+		const countRes = await db.prepare('SELECT COUNT(*) as count FROM leaderboard').first<{ count: number }>();
+		if (countRes && countRes.count === 0) {
+			for (const p of INITIAL_FALLBACK_LEADERBOARD) {
+				await db
+					.prepare('INSERT INTO leaderboard (id, name, score, max_streak, accuracy, created_at) VALUES (?, ?, ?, ?, ?, ?)')
+					.bind(p.id, p.name, p.score, p.max_streak, p.accuracy, p.created_at || new Date().toISOString())
+					.run();
+			}
+		}
 	} catch (e) {
 		console.warn('Could not auto-create D1 schema:', e);
 	}
@@ -51,10 +65,12 @@ async function getNextGuestUsername(db: D1Database): Promise<string> {
 			.all<{ name: string }>();
 
 		let maxIndex = 0;
-		if (results) {
+		let foundAny = false;
+		if (results && results.length > 0) {
 			for (const row of results) {
 				const match = row.name?.match(/^user_(\d+)$/);
 				if (match) {
+					foundAny = true;
 					const num = parseInt(match[1], 10);
 					if (!isNaN(num) && num > maxIndex) {
 						maxIndex = num;
@@ -62,9 +78,13 @@ async function getNextGuestUsername(db: D1Database): Promise<string> {
 				}
 			}
 		}
-		return `user_${maxIndex + 1}`;
+
+		if (foundAny) {
+			return `user_${maxIndex + 1}`;
+		}
+		return getNextFallbackGuestUsername();
 	} catch (e) {
-		return 'user_1';
+		return getNextFallbackGuestUsername();
 	}
 }
 

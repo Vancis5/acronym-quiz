@@ -26,7 +26,7 @@ export const options = {
 		app: ({ head, body, assets, nonce, env }) => "<!doctype html>\n<html lang=\"en\">\n\t<head>\n\t\t<meta charset=\"utf-8\" />\n\t\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover\" />\n\t\t<meta name=\"text-scale\" content=\"scale\" />\n\t\t<script>\n\t\t\t(function() {\n\t\t\t\ttry {\n\t\t\t\t\tvar saved = localStorage.getItem('philnits_theme');\n\t\t\t\t\tvar prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;\n\t\t\t\t\tif (saved === 'light' || (!saved && prefersLight)) {\n\t\t\t\t\t\tdocument.documentElement.classList.add('light');\n\t\t\t\t\t} else {\n\t\t\t\t\t\tdocument.documentElement.classList.remove('light');\n\t\t\t\t\t}\n\t\t\t\t} catch (e) {}\n\t\t\t})();\n\t\t</script>\n\t\t<script>\n\t\t\tdocument.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });\n\t\t\tdocument.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });\n\t\t\tdocument.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });\n\t\t\tdocument.addEventListener('touchmove', (e) => {\n\t\t\t\tif (e.touches.length > 1) e.preventDefault();\n\t\t\t}, { passive: false });\n\t\t</script>\n\t\t<script src=\"/three.r134.min.js\"></script>\n\t\t<script src=\"/vanta.cells.min.js\"></script>\n\t\t" + head + "\n\t</head>\n\t<body data-sveltekit-preload-data=\"hover\">\n\t\t<div style=\"display: contents\">" + body + "</div>\n\t</body>\n</html>\n",
 		error
 	},
-	version_hash: "1n13iez"
+	version_hash: "a163qp"
 };
 
 export async function get_hooks() {
