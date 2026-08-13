@@ -17,9 +17,46 @@
 
 	let soundOn = $state(true);
 	let isLight = $state(false);
+	// svelte-ignore state_referenced_locally
+	let displayScore = $state(score);
+	let animationFrame: number;
 
 	onMount(() => {
 		isLight = document.documentElement.classList.contains('light');
+	});
+
+	$effect(() => {
+		const target = score;
+		if (target === displayScore) return;
+		if (target < displayScore) {
+			displayScore = target;
+			return;
+		}
+
+		const start = displayScore;
+		const diff = target - start;
+		const duration = Math.min(450, Math.max(220, diff * 1.5));
+		const startTime = performance.now();
+
+		const step = (now: number) => {
+			const elapsed = now - startTime;
+			const progress = Math.min(1, elapsed / duration);
+			const ease = 1 - Math.pow(1 - progress, 3);
+			displayScore = Math.round(start + diff * ease);
+
+			if (progress < 1) {
+				animationFrame = requestAnimationFrame(step);
+			} else {
+				displayScore = target;
+			}
+		};
+
+		cancelAnimationFrame(animationFrame);
+		animationFrame = requestAnimationFrame(step);
+
+		return () => {
+			cancelAnimationFrame(animationFrame);
+		};
 	});
 
 	function toggleAudio() {
@@ -54,7 +91,7 @@
 	<div class="brand">PhilNITS</div>
 
 	<div class="stats-center">
-		<span class="score-text">SCORE {score}</span>
+		<span class="score-text">{displayScore}</span>
 		{#if streak > 0}
 			<span class="streak-text animate-streak-pulse">×{streak}</span>
 		{/if}
@@ -117,10 +154,12 @@
 
 	.score-text {
 		color: var(--text-primary);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.streak-text {
 		color: var(--cyan);
+		font-variant-numeric: tabular-nums;
 	}
 
 	.actions-group {
@@ -140,11 +179,13 @@
 		justify-content: center;
 		cursor: pointer;
 		padding: 6px;
-		border-radius: 0;
+		border-radius: var(--radius-md);
+		transition: background-color 0.15s ease, color 0.15s ease;
 	}
 
 	.icon-btn:hover {
-		color: var(--yellow);
+		background: var(--bg-hover);
+		color: var(--yellow-text);
 	}
 
 	@media (max-width: 480px) {

@@ -73,6 +73,58 @@ export function playCorrectSound(streak = 1) {
 	});
 }
 
+// Encouraging bright double-chime when answer is super close
+export function playCloseSound() {
+	if (!soundEnabled) return;
+	const context = getContext();
+	if (!context) return;
+
+	const now = context.currentTime;
+	const notes = [587.33, 783.99]; // D5 -> G5
+	notes.forEach((freq, i) => {
+		const osc = context.createOscillator();
+		const gain = context.createGain();
+
+		osc.type = 'triangle';
+		osc.frequency.setValueAtTime(freq, now + i * 0.08);
+
+		gain.gain.setValueAtTime(0.18, now + i * 0.08);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.22);
+
+		osc.connect(gain);
+		gain.connect(context.destination);
+
+		osc.start(now + i * 0.08);
+		osc.stop(now + i * 0.08 + 0.22);
+	});
+}
+
+// Gentle neutral chord when answer is almost / halfway
+export function playAlmostSound() {
+	if (!soundEnabled) return;
+	const context = getContext();
+	if (!context) return;
+
+	const now = context.currentTime;
+	const notes = [440, 523.25]; // A4 -> C5
+	notes.forEach((freq, i) => {
+		const osc = context.createOscillator();
+		const gain = context.createGain();
+
+		osc.type = 'sine';
+		osc.frequency.setValueAtTime(freq, now + i * 0.07);
+
+		gain.gain.setValueAtTime(0.18, now + i * 0.07);
+		gain.gain.exponentialRampToValueAtTime(0.001, now + i * 0.07 + 0.2);
+
+		osc.connect(gain);
+		gain.connect(context.destination);
+
+		osc.start(now + i * 0.07);
+		osc.stop(now + i * 0.07 + 0.2);
+	});
+}
+
 // Low thud / buzz on wrong answer
 export function playWrongSound() {
 	if (!soundEnabled) return;

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { X } from 'lucide-svelte';
+	import { X, Check } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import { ACRONYMS } from '$lib/data/acronyms';
 
@@ -78,7 +78,9 @@
 					<div class="list-row">
 						<div class="acronym-col">
 							<span class="acronym-code">{item.acronym}</span>
-							<span class="mastered-icon">{masteredIds.has(item.id) ? '✓' : ''}</span>
+							{#if masteredIds.has(item.id)}
+								<span class="mastered-icon"><Check size={14} strokeWidth={2.5} /></span>
+							{/if}
 						</div>
 						<div class="meaning-col">{item.meaning}</div>
 					</div>
@@ -109,7 +111,7 @@
 		min-height: 480px;
 		background: var(--bg-card);
 		border: 1px solid var(--border-strong);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 		display: flex;
 		flex-direction: column;
 		padding: 24px;
@@ -124,7 +126,7 @@
 	}
 
 	.title {
-		font-family: var(--font-mono);
+		font-family: var(--font-sans);
 		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--text-primary);
@@ -133,16 +135,22 @@
 	.close-btn {
 		background: transparent;
 		border: none;
+		border-radius: var(--radius-sm);
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
-		padding: 0;
+		padding: 4px;
+		transition: background-color 0.15s ease;
+	}
+
+	.close-btn:hover {
+		background: var(--bg-hover);
 	}
 
 	.search-input {
 		background: var(--bg);
 		border: 1px solid var(--border-strong);
-		border-radius: 0;
+		border-radius: var(--radius-md);
 		color: var(--text-primary);
 		padding: 10px 12px;
 		font-family: var(--font-sans);
@@ -150,6 +158,7 @@
 		outline: none;
 		width: 100%;
 		flex-shrink: 0;
+		transition: border-color 0.15s ease;
 	}
 
 	.search-input:focus {
@@ -174,12 +183,18 @@
 		border: 1px solid var(--border);
 		background: transparent;
 		color: var(--text-muted);
-		border-radius: 0;
+		border-radius: var(--radius-full);
 		padding: 6px 12px;
 		font-size: 0.75rem;
 		cursor: pointer;
 		white-space: nowrap;
 		flex-shrink: 0;
+		transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+	}
+
+	.cat-chip:hover:not(.active) {
+		background: var(--bg-hover);
+		color: var(--text-primary);
 	}
 
 	.cat-chip.active {

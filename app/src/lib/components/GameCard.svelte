@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { type AcronymItem } from '$lib/data/acronyms';
-	import { playPopSound, playCorrectSound, playWrongSound } from '$lib/audio';
-	import { Lightbulb } from 'lucide-svelte';
+	import { playPopSound, playCorrectSound, playCloseSound, playAlmostSound, playWrongSound } from '$lib/audio';
+	import { evaluateAnswer, type GradeStatus } from '$lib/grader';
+	import { Lightbulb, Check, X, Sparkles, Minus } from 'lucide-svelte';
 
 	let {
 		item,
@@ -11,13 +12,13 @@
 	}: {
 		item: AcronymItem;
 		streak?: number;
-		onanswer?: (detail: { correct: boolean; points: number }) => void;
+		onanswer?: (detail: { status: GradeStatus; correct: boolean; points: number }) => void;
 		onnext?: () => void;
 	} = $props();
 
 	let inputValue = $state('');
 	let isSubmitted = $state(false);
-	let isCorrect = $state(false);
+	let resultStatus = $state<GradeStatus | null>(null);
 	let isShaking = $state(false);
 	let hintLevel = $state(0);
 
@@ -29,7 +30,7 @@
 		if (item) {
 			inputValue = '';
 			isSubmitted = false;
-			isCorrect = false;
+			resultStatus = null;
 			isShaking = false;
 			hintLevel = 0;
 			setTimeout(() => focusInput(), 50);
@@ -43,8 +44,8 @@
 
 	function checkAnswer() {
 		if (isSubmitted || !inputValue.trim()) return;
-		const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
-		evaluateResult(normalize(inputValue) === normalize(cleanMeaning));
+		const result = evaluateAnswer(inputValue, cleanMeaning);
+		evaluateResult(result.status, result.earnedRatio);
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
@@ -54,19 +55,28 @@
 		}
 	}
 
-	function evaluateResult(correct: boolean) {
+	function evaluateResult(status: GradeStatus, earnedRatio: number) {
 		isSubmitted = true;
-		isCorrect = correct;
+		resultStatus = status;
 
-		if (correct) {
-			const points = Math.max(20, 100 + streak * 25 - hintLevel * 20);
+		const basePoints = Math.max(20, 100 + streak * 25 - hintLevel * 20);
+
+		if (status === 'correct') {
 			playCorrectSound(streak + 1);
-			if (onanswer) onanswer({ correct: true, points });
+			if (onanswer) onanswer({ status: 'correct', correct: true, points: basePoints });
+		} else if (status === 'close') {
+			const earned = Math.round(basePoints * earnedRatio);
+			playCloseSound();
+			if (onanswer) onanswer({ status: 'close', correct: false, points: earned });
+		} else if (status === 'almost') {
+			const earned = Math.round(basePoints * earnedRatio);
+			playAlmostSound();
+			if (onanswer) onanswer({ status: 'almost', correct: false, points: earned });
 		} else {
 			isShaking = true;
 			playWrongSound();
 			setTimeout(() => (isShaking = false), 500);
-			if (onanswer) onanswer({ correct: false, points: 0 });
+			if (onanswer) onanswer({ status: 'wrong', correct: false, points: 0 });
 		}
 	}
 
@@ -94,9 +104,23 @@
 
 	<!-- Info zone: always takes up same space, content swaps -->
 	<div class="info-zone">
-		{#if isSubmitted}
-			<div class="info-log animate-pop-in {isCorrect ? 'log-correct' : 'log-wrong'}">
-				<span class="log-prefix">{isCorrect ? '✓ CORRECT' : '✗ WRONG'}</span>
+		{#if isSubmitted && resultStatus}
+			<div class="info-log animate-pop-in log-{resultStatus}">
+				<span class="log-prefix">
+					{#if resultStatus === 'correct'}
+						<Check size={13} strokeWidth={3} />
+						CORRECT
+					{:else if resultStatus === 'close'}
+						<Sparkles size={13} strokeWidth={2.5} />
+						CLOSE!
+					{:else if resultStatus === 'almost'}
+						<Minus size={13} strokeWidth={3} />
+						ALMOST
+					{:else}
+						<X size={13} strokeWidth={3} />
+						WRONG
+					{/if}
+				</span>
 				<span class="log-answer">{cleanMeaning}</span>
 			</div>
 		{:else if hintLevel > 0}
@@ -120,8 +144,8 @@
 		<input
 			id="meaning-text-input"
 			type="text"
-			class="meaning-input {isSubmitted ? (isCorrect ? 'correct' : 'wrong') : ''}"
-			placeholder="What does {cleanAcronym} stand for?"
+			class="meaning-input {isSubmitted && resultStatus ? resultStatus : ''}"
+			placeholder="Enter meaning..."
 			bind:value={inputValue}
 			disabled={isSubmitted}
 			onkeydown={handleKeyDown}
@@ -155,7 +179,7 @@
 		width: 100%;
 		background: var(--bg-card);
 		border: 1px solid var(--border-strong);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 		padding: 28px 28px 24px;
 		display: flex;
 		flex-direction: column;
@@ -169,8 +193,9 @@
 	}
 
 	.category-tag {
-		font-family: var(--font-mono);
+		font-family: var(--font-sans);
 		font-size: 11px;
+		font-weight: 600;
 		color: var(--text-muted);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
@@ -184,11 +209,12 @@
 	}
 
 	.prompt-label {
-		color: var(--yellow);
-		font-family: var(--font-mono);
+		color: var(--yellow-text);
+		font-family: var(--font-sans);
 		font-size: 11px;
+		font-weight: 700;
 		text-transform: uppercase;
-		letter-spacing: 0.1em;
+		letter-spacing: 0.08em;
 	}
 
 	.acronym-hero-text {
@@ -211,8 +237,8 @@
 	}
 
 	.info-log {
-		font-family: var(--font-mono);
-		font-size: 0.85rem;
+		font-family: var(--font-sans);
+		font-size: 0.88rem;
 		line-height: 1.5;
 		display: flex;
 		flex-direction: column;
@@ -224,12 +250,20 @@
 		color: var(--green);
 	}
 
+	.log-close {
+		color: var(--cyan);
+	}
+
+	.log-almost {
+		color: var(--yellow-text);
+	}
+
 	.log-wrong {
 		color: var(--red);
 	}
 
 	.log-hint {
-		color: var(--yellow);
+		color: var(--yellow-text);
 		flex-direction: row;
 		align-items: center;
 		gap: 6px;
@@ -244,6 +278,9 @@
 		font-weight: 700;
 		font-size: 0.75rem;
 		letter-spacing: 0.08em;
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
 	}
 
 	.log-answer {
@@ -263,12 +300,14 @@
 		flex: 1;
 		background: var(--bg);
 		border: 1px solid var(--border-strong);
+		border-radius: var(--radius-md);
 		color: var(--text-primary);
 		font-family: var(--font-sans);
 		font-size: 1rem;
 		padding: 12px;
 		outline: none;
 		min-width: 0;
+		transition: border-color 0.15s ease;
 	}
 
 	.meaning-input:focus {
@@ -280,6 +319,16 @@
 		color: var(--green);
 	}
 
+	.meaning-input.close {
+		border-color: var(--cyan);
+		color: var(--cyan);
+	}
+
+	.meaning-input.almost {
+		border-color: var(--yellow-text);
+		color: var(--yellow-text);
+	}
+
 	.meaning-input.wrong {
 		border-color: var(--red);
 		color: var(--red);
@@ -288,16 +337,17 @@
 	/* Shared base for submit + next — same size, same position */
 	.action-btn {
 		flex-shrink: 0;
-		font-family: var(--font-mono);
+		font-family: var(--font-sans);
 		font-weight: 700;
-		font-size: 0.8rem;
+		font-size: 0.82rem;
 		padding: 0 20px;
 		cursor: pointer;
-		border-radius: 0;
-		letter-spacing: 0.05em;
+		border-radius: var(--radius-md);
+		letter-spacing: 0.04em;
 		white-space: nowrap;
 		height: auto;
 		border: 1px solid transparent;
+		transition: background-color 0.15s ease, color 0.15s ease, filter 0.15s ease, border-color 0.15s ease;
 	}
 
 	.submit-btn {
@@ -334,12 +384,15 @@
 	.hint-btn {
 		background: transparent;
 		border: none;
+		border-radius: var(--radius-sm);
 		color: var(--text-muted);
 		font-size: 0.8rem;
-		font-family: var(--font-mono);
+		font-family: var(--font-sans);
 		cursor: pointer;
-		padding: 0;
+		padding: 2px 6px;
+		margin: -2px -6px;
 		text-align: left;
+		transition: color 0.15s ease;
 	}
 
 	.hint-btn:hover:not(:disabled) {

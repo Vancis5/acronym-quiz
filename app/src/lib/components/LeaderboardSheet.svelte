@@ -5,9 +5,6 @@
 
 	let {
 		isOpen = false,
-		currentScore = 0,
-		maxStreak = 0,
-		accuracy = 100,
 		close
 	}: {
 		isOpen?: boolean;
@@ -19,9 +16,6 @@
 
 	let leaderboard = $state<LeaderboardEntry[]>([]);
 	let isLoading = $state(false);
-	let playerName = $state('');
-	let isSubmitting = $state(false);
-	let submittedSuccess = $state(false);
 
 	$effect(() => {
 		if (isOpen) {
@@ -41,33 +35,6 @@
 			console.error('Failed to fetch leaderboard:', err);
 		} finally {
 			isLoading = false;
-		}
-	}
-
-	async function submitScore() {
-		if (!playerName.trim() || isSubmitting) return;
-		isSubmitting = true;
-
-		try {
-			const res = await fetch('/api/leaderboard', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					name: playerName,
-					score: currentScore,
-					max_streak: maxStreak,
-					accuracy
-				})
-			});
-			const data = (await res.json()) as { success: boolean };
-			if (data.success) {
-				submittedSuccess = true;
-				await fetchLeaderboard();
-			}
-		} catch (err) {
-			console.error('Submit error:', err);
-		} finally {
-			isSubmitting = false;
 		}
 	}
 
@@ -94,27 +61,6 @@
 					<X size={20} />
 				</button>
 			</div>
-
-			{#if currentScore > 0 && !submittedSuccess}
-				<div class="submit-card">
-					<div class="submit-row">
-						<input
-							class="submit-input"
-							type="text"
-							placeholder="Your Handle"
-							maxlength="18"
-							bind:value={playerName}
-						/>
-						<button
-							class="submit-btn"
-							onclick={submitScore}
-							disabled={!playerName.trim() || isSubmitting}
-						>
-							SUBMIT
-						</button>
-					</div>
-				</div>
-			{/if}
 
 			<div class="list-wrapper">
 				{#if isLoading}
@@ -159,7 +105,7 @@
 		min-height: 480px;
 		background: var(--bg-card);
 		border: 1px solid var(--border-strong);
-		border-radius: 0;
+		border-radius: var(--radius-lg);
 		display: flex;
 		flex-direction: column;
 		padding: 24px;
@@ -174,7 +120,7 @@
 	}
 
 	.title {
-		font-family: var(--font-mono);
+		font-family: var(--font-sans);
 		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--text-primary);
@@ -183,55 +129,16 @@
 	.close-btn {
 		background: transparent;
 		border: none;
+		border-radius: var(--radius-sm);
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
-		padding: 0;
+		padding: 4px;
+		transition: background-color 0.15s ease;
 	}
 
-	.submit-card {
-		border: 1px solid var(--border-strong);
-		padding: 14px;
-		background: transparent;
-		flex-shrink: 0;
-	}
-
-	.submit-row {
-		display: flex;
-		gap: 8px;
-	}
-
-	.submit-input {
-		flex: 1;
-		background: var(--bg);
-		border: 1px solid var(--border-strong);
-		border-radius: 0;
-		color: var(--text-primary);
-		padding: 10px 12px;
-		font-family: var(--font-sans);
-		font-size: 0.9rem;
-		outline: none;
-	}
-
-	.submit-input:focus {
-		border-color: var(--cyan);
-	}
-
-	.submit-btn {
-		background: var(--yellow);
-		color: #1a1a1a;
-		border: none;
-		padding: 10px 20px;
-		font-weight: 700;
-		font-size: 0.85rem;
-		cursor: pointer;
-		border-radius: 0;
-		letter-spacing: 0.04em;
-	}
-
-	.submit-btn:disabled {
-		opacity: 0.5;
-		cursor: default;
+	.close-btn:hover {
+		background: var(--bg-hover);
 	}
 
 	.list-wrapper {
@@ -278,7 +185,7 @@
 		color: var(--text-secondary);
 	}
 
-	.rank-gold .rank-pos, .rank-gold .score-val { color: var(--yellow); }
+	.rank-gold .rank-pos, .rank-gold .score-val { color: var(--yellow-text); }
 	.rank-silver .rank-pos, .rank-silver .score-val { color: #c0c0c0; }
 	.rank-bronze .rank-pos, .rank-bronze .score-val { color: #cd7f32; }
 

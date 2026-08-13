@@ -58,11 +58,11 @@
 		currentItemIndex = ACRONYMS.findIndex((a) => a.id === targetItem.id);
 	}
 
-	function handleAnswer(detail: { correct: boolean; points: number }) {
-		const { correct, points } = detail;
+	function handleAnswer(detail: { status: 'correct' | 'close' | 'almost' | 'wrong'; correct: boolean; points: number }) {
+		const { status, correct, points } = detail;
 		totalAnswered += 1;
 
-		if (correct) {
+		if (correct || status === 'correct') {
 			correctAnswered += 1;
 			streak += 1;
 			if (streak > maxStreak) maxStreak = streak;
@@ -76,6 +76,9 @@
 			if (streak === 5 || streak === 10 || streak === 15) {
 				playStreakBonusSound();
 			}
+		} else if (status === 'close' || status === 'almost') {
+			score += points;
+			streak = 0;
 		} else {
 			streak = 0;
 		}
@@ -174,11 +177,14 @@
 		color: var(--text-secondary);
 		font-size: 0.75rem;
 		cursor: pointer;
-		padding: 0;
-		font-family: var(--font-sans);
+		padding: 2px 6px;
+		border-radius: var(--radius-sm);
+		font-family: var(--font-mono);
+		transition: color 0.15s ease, background-color 0.15s ease;
 	}
 
 	.reset-btn:hover {
 		color: var(--red);
+		background: var(--bg-hover);
 	}
 </style>
