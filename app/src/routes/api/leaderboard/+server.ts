@@ -25,6 +25,14 @@ declare global {
 function getFallbackStore(): LeaderboardEntry[] {
 	if (!globalThis.__dev_leaderboard) {
 		globalThis.__dev_leaderboard = [...INITIAL_FALLBACK_LEADERBOARD];
+	} else {
+		// Merge any missing placeholder entries into the existing store
+		for (const placeholder of INITIAL_FALLBACK_LEADERBOARD) {
+			if (!globalThis.__dev_leaderboard.some((e) => e.id === placeholder.id || e.name === placeholder.name)) {
+				globalThis.__dev_leaderboard.push(placeholder);
+			}
+		}
+		globalThis.__dev_leaderboard.sort((a, b) => b.score - a.score);
 	}
 	return globalThis.__dev_leaderboard;
 }
@@ -41,15 +49,14 @@ async function ensureLeaderboardTable(db: D1Database): Promise<void> {
 			.prepare('CREATE INDEX IF NOT EXISTS idx_leaderboard_score ON leaderboard (score DESC)')
 			.run();
 
-		// Seed initial funny placeholders if table is empty
-		const countRes = await db.prepare('SELECT COUNT(*) as count FROM leaderboard').first<{ count: number }>();
-		if (countRes && countRes.count === 0) {
-			for (const p of INITIAL_FALLBACK_LEADERBOARD) {
-				await db
-					.prepare('INSERT INTO leaderboard (id, name, score, max_streak, accuracy, created_at) VALUES (?, ?, ?, ?, ?, ?)')
-					.bind(p.id, p.name, p.score, p.max_streak, p.accuracy, p.created_at || new Date().toISOString())
-					.run();
-			}
+		// Merge placeholder entries safely without overwriting or duplicating
+		for (const p of INITIAL_FALLBACK_LEADERBOARD) {
+			await db
+				.prepare(
+					'INSERT OR IGNORE INTO leaderboard (id, name, score, max_streak, accuracy, created_at) VALUES (?, ?, ?, ?, ?, ?)'
+				)
+				.bind(p.id, p.name, p.score, p.max_streak, p.accuracy, p.created_at || new Date().toISOString())
+				.run();
 		}
 	} catch (e) {
 		console.warn('Could not auto-create D1 schema:', e);
