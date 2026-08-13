@@ -19,23 +19,39 @@
 	let isLight = $state(false);
 	// svelte-ignore state_referenced_locally
 	let displayScore = $state(score);
+	let isDeducting = $state(false);
+	let deductTimeout: ReturnType<typeof setTimeout>;
 	let animationFrame: number;
 
 	onMount(() => {
 		isLight = document.documentElement.classList.contains('light');
+		const observer = new MutationObserver(() => {
+			isLight = document.documentElement.classList.contains('light');
+		});
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['class']
+		});
+		return () => observer.disconnect();
 	});
 
 	$effect(() => {
 		const target = score;
 		if (target === displayScore) return;
-		if (target < displayScore) {
-			displayScore = target;
-			return;
-		}
 
 		const start = displayScore;
 		const diff = target - start;
-		const duration = Math.min(450, Math.max(220, diff * 1.5));
+		const absDiff = Math.abs(diff);
+
+		if (diff < 0) {
+			isDeducting = true;
+			clearTimeout(deductTimeout);
+			deductTimeout = setTimeout(() => {
+				isDeducting = false;
+			}, 500);
+		}
+
+		const duration = Math.min(450, Math.max(220, absDiff * 2.5));
 		const startTime = performance.now();
 
 		const step = (now: number) => {
@@ -66,8 +82,10 @@
 
 	function toggleTheme() {
 		const applyTheme = () => {
-			isLight = !isLight;
-			if (isLight) {
+			const currentlyLight = document.documentElement.classList.contains('light');
+			const nextLight = !currentlyLight;
+			isLight = nextLight;
+			if (nextLight) {
 				document.documentElement.classList.add('light');
 				localStorage.setItem('philnits_theme', 'light');
 			} else {
@@ -91,14 +109,14 @@
 	<div class="nav-section nav-left">
 		<span class="brand">philnits acronym quiz</span>
 		<div class="mobile-actions">
-			<button class="icon-btn" onclick={toggleTheme} aria-label="Toggle Theme">
+			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
 				{#if isLight}
 					<Moon size={18} />
 				{:else}
 					<Sun size={18} />
 				{/if}
 			</button>
-			<button class="icon-btn" onclick={toggleAudio} aria-label="Toggle Sound">
+			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
 				{#if soundOn}
 					<Volume2 size={18} />
 				{:else}
@@ -109,7 +127,7 @@
 	</div>
 
 	<div class="stats-center">
-		<span class="score-text">{displayScore}</span>
+		<span class="score-text {isDeducting ? 'deducting' : ''}">{displayScore}</span>
 		{#if streak > 0}
 			<span class="streak-text animate-streak-pulse">×{streak}</span>
 		{/if}
@@ -117,14 +135,14 @@
 
 	<div class="nav-section nav-right">
 		<div class="desktop-actions">
-			<button class="icon-btn" onclick={toggleTheme} aria-label="Toggle Theme">
+			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
 				{#if isLight}
 					<Moon size={18} />
 				{:else}
 					<Sun size={18} />
 				{/if}
 			</button>
-			<button class="icon-btn" onclick={toggleAudio} aria-label="Toggle Sound">
+			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
 				{#if soundOn}
 					<Volume2 size={18} />
 				{:else}
@@ -210,6 +228,28 @@
 	.score-text {
 		color: var(--text-primary);
 		font-variant-numeric: tabular-nums;
+		display: inline-block;
+		transition: color 0.3s ease, transform 0.3s var(--ease-out);
+	}
+
+	.score-text.deducting {
+		color: color-mix(in srgb, var(--red) 75%, var(--text-primary));
+		animation: subtleRedPulse 0.45s var(--ease-out);
+	}
+
+	@keyframes subtleRedPulse {
+		0% {
+			color: var(--text-primary);
+			transform: scale(1);
+		}
+		30% {
+			color: color-mix(in srgb, var(--red) 85%, var(--text-primary));
+			transform: scale(1.05);
+		}
+		100% {
+			color: color-mix(in srgb, var(--red) 75%, var(--text-primary));
+			transform: scale(1);
+		}
 	}
 
 	.streak-text {

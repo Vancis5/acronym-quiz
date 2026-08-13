@@ -45,7 +45,7 @@ export function triggerConfettiBurst(count = 60) {
 			y: originY,
 			vx: Math.cos(angle) * speed,
 			vy: Math.sin(angle) * speed,
-			size: 6 + Math.random() * 8,
+			size: 2.5 + Math.random() * 3.5,
 			color: colors[Math.floor(Math.random() * colors.length)],
 			alpha: 1,
 			rotation: Math.random() * Math.PI * 2,

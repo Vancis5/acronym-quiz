@@ -4,8 +4,13 @@
 	import GameCard from '$lib/components/GameCard.svelte';
 	import LeaderboardSheet from '$lib/components/LeaderboardSheet.svelte';
 	import AcronymListSheet from '$lib/components/AcronymListSheet.svelte';
+	import RoundCompleteCard from '$lib/components/RoundCompleteCard.svelte';
 	import { ACRONYMS } from '$lib/data/acronyms';
 	import { playStreakBonusSound } from '$lib/audio';
+	import { triggerConfettiBurst } from '$lib/confetti';
+	import { type GradeStatus } from '$lib/grader';
+
+	const ROUND_SIZE = 10;
 
 	let currentItemIndex = $state(0);
 	let score = $state(0);
@@ -17,9 +22,21 @@
 
 	let showLeaderboard = $state(false);
 	let showDictionary = $state(false);
+	let showRoundComplete = $state(false);
+
+	// Round tracking
+	let roundAnswered = $state(0);
+	let roundCorrect = $state(0);
+	let savedUsername = $state('');
+
+	// In-memory round scheduling (resets on page refresh)
+	let currentRoundNumber = $state(1);
+	let currentRoundAcronymIds = $state<Set<number>>(new Set());
+	let previousRoundAcronymIds = $state<Set<number>>(new Set());
+	let lastSeenRound = $state<Map<number, number>>(new Map());
 
 	let currentItem = $derived(ACRONYMS[currentItemIndex]);
-	let accuracy = $derived(totalAnswered > 0 ? (correctAnswered / totalAnswered) * 100 : 100);
+	let accuracy = $derived(totalAnswered > 0 ? (correctAnswered / totalAnswered) * 100 : 0);
 	let multiplier = $derived(streak >= 10 ? 3 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1);
 
 	onMount(() => {
@@ -33,6 +50,8 @@
 			if (savedMastered) {
 				masteredIds = new Set(JSON.parse(savedMastered));
 			}
+			const name = localStorage.getItem('philnits_username');
+			if (name) savedUsername = name;
 		} catch (e) {
 			console.warn('LocalStorage unavailable:', e);
 		}
@@ -45,25 +64,70 @@
 	}
 
 	function pickNextQuestion() {
-		const unmastered = ACRONYMS.filter((a) => !masteredIds.has(a.id));
-		const pool = unmastered.length > 0 ? unmastered : ACRONYMS;
+		// 1. Exclude acronyms from the current round and previous round
+		let eligible = ACRONYMS.filter(
+			(a) => !currentRoundAcronymIds.has(a.id) && !previousRoundAcronymIds.has(a.id)
+		);
 
-		let nextIdx = Math.floor(Math.random() * pool.length);
-		let targetItem = pool[nextIdx];
-
-		if (targetItem.id === currentItem?.id && ACRONYMS.length > 1) {
-			targetItem = pool[(nextIdx + 1) % pool.length];
+		// Fallback if pool is exhausted
+		if (eligible.length === 0) {
+			eligible = ACRONYMS.filter((a) => !currentRoundAcronymIds.has(a.id));
+		}
+		if (eligible.length === 0) {
+			eligible = ACRONYMS;
 		}
 
-		currentItemIndex = ACRONYMS.findIndex((a) => a.id === targetItem.id);
+		// 2. Calculate selection weights:
+		// - Never seen in session: weight 5.0 (priority)
+		// - Seen rounds ago (>= 2): weight increases by +1 each round since last seen
+		// - Unmastered: 1.5x weight multiplier
+		const weighted = eligible.map((item) => {
+			let weight = 1;
+			if (!lastSeenRound.has(item.id)) {
+				weight = 5;
+			} else {
+				const roundsAgo = currentRoundNumber - (lastSeenRound.get(item.id) || 0);
+				weight = Math.max(1, roundsAgo - 1);
+			}
+
+			if (!masteredIds.has(item.id)) {
+				weight *= 1.5;
+			}
+
+			return { item, weight };
+		});
+
+		// 3. Weighted roulette wheel selection
+		const totalWeight = weighted.reduce((sum, entry) => sum + entry.weight, 0);
+		let randomVal = Math.random() * totalWeight;
+		let selected = weighted[0].item;
+
+		for (const entry of weighted) {
+			if (randomVal < entry.weight) {
+				selected = entry.item;
+				break;
+			}
+			randomVal -= entry.weight;
+		}
+
+		if (selected.id === currentItem?.id && eligible.length > 1) {
+			selected = eligible.find((a) => a.id !== currentItem.id) || selected;
+		}
+
+		currentRoundAcronymIds.add(selected.id);
+		lastSeenRound.set(selected.id, currentRoundNumber);
+
+		currentItemIndex = ACRONYMS.findIndex((a) => a.id === selected.id);
 	}
 
-	function handleAnswer(detail: { status: 'correct' | 'close' | 'almost' | 'wrong'; correct: boolean; points: number }) {
+	function handleAnswer(detail: { status: GradeStatus; correct: boolean; points: number }) {
 		const { status, correct, points } = detail;
 		totalAnswered += 1;
+		roundAnswered += 1;
 
 		if (correct || status === 'correct') {
 			correctAnswered += 1;
+			roundCorrect += 1;
 			streak += 1;
 			if (streak > maxStreak) maxStreak = streak;
 
@@ -79,9 +143,57 @@
 		} else if (status === 'close' || status === 'almost') {
 			score += points;
 			streak = 0;
+		} else if (status === 'skipped') {
+			score = Math.max(0, score - 25);
+			streak = 0;
 		} else {
 			streak = 0;
 		}
+	}
+
+	function handleNextQuestion() {
+		if (roundAnswered >= ROUND_SIZE) {
+			triggerConfettiBurst(60);
+			showRoundComplete = true;
+		} else {
+			pickNextQuestion();
+		}
+	}
+
+	async function handleRoundContinue(username: string) {
+		showRoundComplete = false;
+
+		const cleanName = username ? username.trim() : '';
+
+		// Persist username
+		if (cleanName) {
+			savedUsername = cleanName;
+			try { localStorage.setItem('philnits_username', cleanName); } catch (e) {}
+		}
+
+		// Always upload round score & performance to leaderboard
+		try {
+			await fetch('/api/leaderboard', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({
+					name: cleanName || savedUsername || undefined,
+					score,
+					max_streak: maxStreak,
+					accuracy: Math.round(accuracy)
+				})
+			});
+		} catch (e) {}
+
+		// Advance round and rotate previous round exclusion
+		previousRoundAcronymIds = new Set(currentRoundAcronymIds);
+		currentRoundAcronymIds = new Set();
+		currentRoundNumber += 1;
+
+		// Reset round counters and continue immediately
+		roundAnswered = 0;
+		roundCorrect = 0;
+		pickNextQuestion();
 	}
 
 	function resetSession() {
@@ -90,7 +202,16 @@
 		maxStreak = 0;
 		totalAnswered = 0;
 		correctAnswered = 0;
+		roundAnswered = 0;
+		roundCorrect = 0;
+		currentRoundNumber = 1;
+		currentRoundAcronymIds = new Set();
+		previousRoundAcronymIds = new Set();
+		lastSeenRound = new Map();
+		showRoundComplete = false;
 		pickNextQuestion();
+		const el = document.getElementById('meaning-text-input');
+		if (el) (el as HTMLInputElement).focus({ preventScroll: true });
 	}
 </script>
 
@@ -107,19 +228,48 @@
 	/>
 
 	<section class="game-area">
-		{#if currentItem}
+		<div class="card-progress-header">
+			<span class="progress-indicator">
+				{showRoundComplete ? '10 of 10' : `${Math.min(roundAnswered + 1, ROUND_SIZE)} of ${ROUND_SIZE}`}
+			</span>
+		</div>
+
+		{#if showRoundComplete}
+			<RoundCompleteCard
+				{score}
+				roundCorrect={roundCorrect}
+				roundTotal={ROUND_SIZE}
+				{maxStreak}
+				accuracy={Math.round(accuracy)}
+				{savedUsername}
+				onContinue={handleRoundContinue}
+			/>
+		{:else if currentItem}
 			<GameCard
 				item={currentItem}
 				{streak}
 				onanswer={handleAnswer}
-				onnext={pickNextQuestion}
+				onnext={handleNextQuestion}
 			/>
 		{/if}
 
 		<div class="session-bar">
-			<span>Mastered: {masteredIds.size}/{ACRONYMS.length}</span>
-			<span>Acc: {Math.round(accuracy)}%</span>
-			<button class="reset-btn" onclick={resetSession}>reset</button>
+			<span class="stat-item">
+				<span class="stat-label">mastered:</span>
+				<span class="stat-value">{masteredIds.size}/{ACRONYMS.length}</span>
+			</span>
+			<span class="stat-item">
+				<span class="stat-label">acc:</span>
+				<span class="stat-value">{Math.round(accuracy)}%</span>
+			</span>
+			<button
+				class="reset-btn"
+				type="button"
+				onpointerdown={(e) => e.preventDefault()}
+				onclick={resetSession}
+			>
+				reset
+			</button>
 		</div>
 	</section>
 
@@ -157,52 +307,107 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 36px 20px 24px;
+		padding: 30px 20px 20px;
 		max-width: 640px;
 		margin: 0 auto;
 		width: 100%;
-		gap: 20px;
+		gap: 18px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 		transition: padding 0.28s cubic-bezier(0.16, 1, 0.3, 1), gap 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 	}
 
-	.session-bar {
+	.card-progress-header {
 		display: flex;
-		align-items: center;
+		align-items: baseline;
 		justify-content: center;
 		font-size: 0.85rem;
 		font-family: var(--font-mono);
 		color: var(--text-secondary);
-		padding: 8px 0;
+		padding: 4px 0;
+		width: 100%;
+		flex-shrink: 0;
+		transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+	}
+
+	.progress-indicator {
+		color: var(--text-muted);
+		font-size: 0.78rem;
+		letter-spacing: 0.02em;
+		font-family: var(--font-mono);
+		text-transform: lowercase;
+	}
+
+	.session-bar {
+		display: flex;
+		align-items: baseline;
+		justify-content: center;
+		font-size: 0.85rem;
+		font-family: var(--font-mono);
+		color: var(--text-secondary);
+		padding: 4px 0;
 		gap: 28px;
 		width: 100%;
 		flex-shrink: 0;
 		transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 	}
 
+	.stat-item {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 6px;
+	}
+
+	.stat-label {
+		color: var(--text-muted);
+		font-size: 0.78rem;
+		letter-spacing: 0.02em;
+	}
+
+	.stat-value {
+		color: var(--text-primary);
+		font-weight: 600;
+		font-variant-numeric: tabular-nums;
+	}
+
 	.reset-btn {
 		background: transparent;
 		border: none;
-		color: var(--text-secondary);
-		font-size: 0.75rem;
-		cursor: pointer;
-		padding: 2px 6px;
-		border-radius: var(--radius-sm);
+		padding: 0;
+		margin: 0;
+		color: color-mix(in srgb, var(--red) 55%, var(--text-muted));
+		font-size: inherit;
 		font-family: var(--font-mono);
-		transition: color 0.15s ease, background-color 0.15s ease;
+		line-height: inherit;
+		cursor: pointer;
+		display: inline;
+		vertical-align: baseline;
+		transition: color 0.15s ease, opacity 0.15s ease;
 	}
 
 	.reset-btn:hover {
 		color: var(--red);
-		background: var(--bg-hover);
+		background: transparent;
+	}
+
+	:global(:root.light) .reset-btn {
+		color: color-mix(in srgb, var(--red) 65%, var(--text-muted));
+	}
+
+	:global(:root.light) .reset-btn:hover {
+		color: var(--red);
 	}
 
 	@media (max-width: 640px) {
 		.game-area {
-			padding: 28px 16px 14px;
-			gap: 12px;
+			padding: 14px 16px 16px;
+			gap: 14px;
 			justify-content: center;
+		}
+
+		.card-progress-header {
+			padding: 4px 0;
+			font-size: 0.8rem;
 		}
 
 		.session-bar {

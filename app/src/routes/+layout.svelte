@@ -12,8 +12,9 @@
 		const isLight = document.documentElement.classList.contains('light');
 		return {
 			// Base colors preserved (#1a1a1a dark / #f0ede8 light)
-			color1: isLight ? 0xedeae4 : 0x141414,
-			color2: isLight ? 0xdcd6cb : 0x2c2c2c
+			// Soft low contrast monochromatic palette
+			color1: isLight ? 0xf0ede8 : 0x141414,
+			color2: isLight ? 0xe4dfd7 : 0x2c2c2c
 		};
 	}
 
@@ -34,6 +35,7 @@
 		}
 
 		try {
+			const isMobile = window.innerWidth < 768;
 			vantaEffect = VANTA.CELLS({
 				el: vantaContainer,
 				mouseControls: false,
@@ -45,7 +47,7 @@
 				scaleMobile: 1.0,
 				color1: colors.color1,
 				color2: colors.color2,
-				size: 1.5,
+				size: isMobile ? 3.8 : 1.8,
 				speed: 0.8
 			});
 
@@ -56,6 +58,9 @@
 				vantaEffect.resize = () => {
 					if (Math.abs(window.innerWidth - vantaLockedWidth) > 30) {
 						vantaLockedWidth = window.innerWidth;
+						if (vantaEffect && vantaEffect.options) {
+							vantaEffect.options.size = window.innerWidth < 768 ? 3.8 : 1.8;
+						}
 						origResize();
 					}
 				};
@@ -67,10 +72,20 @@
 
 	onMount(() => {
 		lastWidth = window.innerWidth;
-		const savedTheme = localStorage.getItem('philnits_theme');
-		if (savedTheme === 'light') {
-			document.documentElement.classList.add('light');
-		}
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+
+		const handleSystemThemeChange = (e: MediaQueryListEvent) => {
+			const saved = localStorage.getItem('philnits_theme');
+			if (!saved) {
+				if (e.matches) {
+					document.documentElement.classList.add('light');
+				} else {
+					document.documentElement.classList.remove('light');
+				}
+			}
+		};
+
+		mediaQuery.addEventListener('change', handleSystemThemeChange);
 
 		initVanta();
 
@@ -113,6 +128,7 @@
 		}
 
 		return () => {
+			mediaQuery.removeEventListener('change', handleSystemThemeChange);
 			observer.disconnect();
 			if (vantaEffect) {
 				vantaEffect.destroy();

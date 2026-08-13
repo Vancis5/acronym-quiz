@@ -9,6 +9,8 @@
 		"/_app/immutable/*",
 		"/p5.min.js",
 		"/robots.txt",
+		"/three.r134.min.js",
+		"/vanta.cells.min.js",
 		"/vanta.topology.min.js"
 	]
 }

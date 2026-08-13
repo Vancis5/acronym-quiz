@@ -1,4 +1,4 @@
-export type GradeStatus = 'correct' | 'close' | 'almost' | 'wrong';
+export type GradeStatus = 'correct' | 'close' | 'almost' | 'wrong' | 'skipped';
 
 export interface EvaluationResult {
 	status: GradeStatus;
@@ -189,7 +189,8 @@ export function evaluateAnswer(input: string, fullMeaning: string): EvaluationRe
 		correct: 4,
 		close: 3,
 		almost: 2,
-		wrong: 1
+		wrong: 1,
+		skipped: 0
 	};
 
 	for (const candidate of candidates) {
@@ -206,14 +207,16 @@ export function evaluateAnswer(input: string, fullMeaning: string): EvaluationRe
 		correct: 'CORRECT',
 		close: 'CLOSE!',
 		almost: 'ALMOST',
-		wrong: 'WRONG'
+		wrong: 'WRONG',
+		skipped: 'SKIPPED'
 	};
 
 	const ratioMap: Record<GradeStatus, number> = {
 		correct: 1.0,
 		close: 0.6,
 		almost: 0.3,
-		wrong: 0.0
+		wrong: 0.0,
+		skipped: 0.0
 	};
 
 	return {

@@ -1,4 +1,4 @@
-import { $ as LEGACY_PROPS, A as component_root, B as component_context, D as get, E as active_reaction, F as init_operations, G as hydrating, H as push, I as mutable_source, J as hydration_mismatch, K as set_hydrate_node, L as set, M as create_text, N as get_first_child, O as set_active_effect, P as get_next_sibling, Q as hydration_failed, R as flushSync, S as is_passive_event, T as active_effect, U as async_mode_flag, V as pop, W as hydrate_node, Z as HYDRATION_ERROR, d as render, j as clear_text_content, k as set_active_reaction, nt as define_property, q as set_hydrating, s as derived, tt as array_from, v as setContext, z as boundary } from "./index-server.js";
+import { A as clear_text_content, B as pop, D as set_active_effect, E as get, F as mutable_source, G as set_hydrate_node, H as async_mode_flag, I as set, K as set_hydrating, L as flushSync, M as get_first_child, N as get_next_sibling, O as set_active_reaction, P as init_operations, Q as LEGACY_PROPS, R as boundary, T as active_reaction, U as hydrate_node, V as push, W as hydrating, X as HYDRATION_ERROR, Z as hydration_failed, _ as setContext, et as array_from, j as create_text, k as component_root, o as derived, q as hydration_mismatch, tt as define_property, u as render, w as active_effect, x as is_passive_event, z as component_context } from "./index-server.js";
 import "./internal.js";
 /**
 * `$env/dynamic/public`
@@ -579,10 +579,10 @@ var options = {
 	service_worker_options: void 0,
 	server_error_boundaries: false,
 	templates: {
-		app: ({ head, body, assets, nonce, env }) => "<!doctype html>\n<html lang=\"en\">\n	<head>\n		<meta charset=\"utf-8\" />\n		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1, interactive-widget=resizes-content, viewport-fit=cover\" />\n		<meta name=\"text-scale\" content=\"scale\" />\n		<script src=\"/p5.min.js\"><\/script>\n		<script src=\"/vanta.topology.min.js\"><\/script>\n		" + head + "\n	</head>\n	<body data-sveltekit-preload-data=\"hover\">\n		<div style=\"display: contents\">" + body + "</div>\n	</body>\n</html>\n",
+		app: ({ head, body, assets, nonce, env }) => "<!doctype html>\n<html lang=\"en\">\n	<head>\n		<meta charset=\"utf-8\" />\n		<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover\" />\n		<meta name=\"text-scale\" content=\"scale\" />\n		<script>\n			(function() {\n				try {\n					var saved = localStorage.getItem('philnits_theme');\n					var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;\n					if (saved === 'light' || (!saved && prefersLight)) {\n						document.documentElement.classList.add('light');\n					} else {\n						document.documentElement.classList.remove('light');\n					}\n				} catch (e) {}\n			})();\n		<\/script>\n		<script>\n			document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });\n			document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });\n			document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });\n			document.addEventListener('touchmove', (e) => {\n				if (e.touches.length > 1) e.preventDefault();\n			}, { passive: false });\n		<\/script>\n		<script src=\"/three.r134.min.js\"><\/script>\n		<script src=\"/vanta.cells.min.js\"><\/script>\n		" + head + "\n	</head>\n	<body data-sveltekit-preload-data=\"hover\">\n		<div style=\"display: contents\">" + body + "</div>\n	</body>\n</html>\n",
 		error: error_template_default
 	},
-	version_hash: "bz7vhb"
+	version_hash: "klljtg"
 };
 async function get_hooks() {
 	let handle;

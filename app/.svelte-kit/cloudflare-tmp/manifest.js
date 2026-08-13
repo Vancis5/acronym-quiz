@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["p5.min.js","robots.txt","vanta.topology.min.js"]),
+	assets: new Set(["p5.min.js","robots.txt","three.r134.min.js","vanta.cells.min.js","vanta.topology.min.js"]),
 	mimeTypes: {".js":"text/javascript",".txt":"text/plain"},
 	_: {
-		client: {start:"_app/immutable/entry/start.CCOfBNnw.js",app:"_app/immutable/entry/app.UTWGXykS.js",imports:["_app/immutable/entry/start.CCOfBNnw.js","_app/immutable/chunks/DDo3SVso.js","_app/immutable/chunks/DtMS2cfH.js","_app/immutable/entry/app.UTWGXykS.js","_app/immutable/chunks/DtMS2cfH.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.C92TwPRa.js",app:"_app/immutable/entry/app.DJpEuplh.js",imports:["_app/immutable/entry/start.C92TwPRa.js","_app/immutable/chunks/UO8ayoEp.js","_app/immutable/chunks/DJ624bz3.js","_app/immutable/entry/app.DJpEuplh.js","_app/immutable/chunks/DJ624bz3.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),

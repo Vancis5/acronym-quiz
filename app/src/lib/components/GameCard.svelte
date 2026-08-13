@@ -2,7 +2,7 @@
 	import { type AcronymItem } from '$lib/data/acronyms';
 	import { playPopSound, playCorrectSound, playCloseSound, playAlmostSound, playWrongSound } from '$lib/audio';
 	import { evaluateAnswer, getCoreMeaning, type GradeStatus } from '$lib/grader';
-	import { Lightbulb, Check, X, Sparkles, Minus } from 'lucide-svelte';
+	import { Lightbulb, Check, X, Sparkles, Minus, SkipForward } from 'lucide-svelte';
 
 	let {
 		item,
@@ -51,7 +51,7 @@
 
 	function handleSkip() {
 		if (isSubmitted) return;
-		evaluateResult('wrong', 0);
+		evaluateResult('skipped', 0);
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
@@ -99,6 +99,9 @@
 			const earned = Math.round(basePoints * earnedRatio);
 			playAlmostSound();
 			if (onanswer) onanswer({ status: 'almost', correct: false, points: earned });
+		} else if (status === 'skipped') {
+			playPopSound();
+			if (onanswer) onanswer({ status: 'skipped', correct: false, points: 0 });
 		} else {
 			isShaking = true;
 			playWrongSound();
@@ -121,13 +124,9 @@
 	}
 </script>
 
-<div class="card-container {isShaking ? 'animate-shake' : ''}">
-	<div class="card-header">
-		<span class="category-tag">{item.category}</span>
-	</div>
-
+<div class="card-container {isShaking ? 'animate-shake' : ''} {isSubmitted && (resultStatus === 'correct' || resultStatus === 'close') ? `shimmer-${resultStatus}` : ''}">
 	<div class="prompt-section">
-		<div class="prompt-label">ACRONYM</div>
+		<div class="category-tag cat-{item.category.toLowerCase()}">{item.category}</div>
 		<div class="acronym-hero-text">{item.acronym}</div>
 	</div>
 
@@ -145,6 +144,9 @@
 					{:else if resultStatus === 'almost'}
 						<Minus size={13} strokeWidth={3} />
 						ALMOST
+					{:else if resultStatus === 'skipped'}
+						<SkipForward size={13} strokeWidth={2.5} />
+						SKIPPED
 					{:else}
 						<X size={13} strokeWidth={3} />
 						WRONG
@@ -196,13 +198,12 @@
 			onpointerdown={(e) => e.preventDefault()}
 			onclick={triggerHint}
 			disabled={isSubmitted || hintLevel >= 2}
-			style:visibility={isSubmitted ? 'hidden' : 'visible'}
 		>
-			{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}
+			<Lightbulb size={13} />
+			<span>{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}</span>
 		</button>
-		{#if hintLevel > 0 && !isSubmitted}
+		{#if hintLevel > 0}
 			<div class="hint-inline animate-pop-in">
-				<Lightbulb size={12} />
 				{#if hintLevel === 1}
 					<span>{wordsInMeaning.length} words · {coreMeaning.length} chars</span>
 				{:else}
@@ -215,6 +216,7 @@
 
 <style>
 	.card-container {
+		position: relative;
 		width: 100%;
 		background: color-mix(in srgb, var(--bg-card) 80%, transparent);
 		backdrop-filter: blur(8px);
@@ -229,19 +231,90 @@
 		will-change: transform;
 	}
 
-	.card-header {
-		display: flex;
-		align-items: center;
-		margin-bottom: 20px;
+	.card-container.shimmer-correct,
+	.card-container.shimmer-close {
+		animation: borderGlow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 	}
 
-	.category-tag {
-		font-family: var(--font-sans);
-		font-size: 11px;
-		font-weight: 600;
-		color: var(--text-muted);
-		text-transform: uppercase;
-		letter-spacing: 0.05em;
+	.card-container.shimmer-correct::after,
+	.card-container.shimmer-close::after {
+		content: '';
+		position: absolute;
+		inset: -1px;
+		border-radius: inherit;
+		padding: 1.5px;
+		background-size: 300% 300%;
+		background-repeat: no-repeat;
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		mask-composite: exclude;
+		pointer-events: none;
+		z-index: 2;
+		animation: borderShimmerSweep 1.1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	}
+
+	.card-container.shimmer-correct::after {
+		background-image: linear-gradient(
+			120deg,
+			transparent 0%,
+			transparent 30%,
+			color-mix(in srgb, var(--green) 35%, transparent) 42%,
+			var(--green) 50%,
+			color-mix(in srgb, var(--green) 35%, transparent) 58%,
+			transparent 70%,
+			transparent 100%
+		);
+	}
+
+	.card-container.shimmer-close::after {
+		background-image: linear-gradient(
+			120deg,
+			transparent 0%,
+			transparent 30%,
+			color-mix(in srgb, var(--cyan) 35%, transparent) 42%,
+			var(--cyan) 50%,
+			color-mix(in srgb, var(--cyan) 35%, transparent) 58%,
+			transparent 70%,
+			transparent 100%
+		);
+	}
+
+	.card-container.shimmer-correct {
+		--glow-color: color-mix(in srgb, var(--green) 30%, transparent);
+	}
+
+	.card-container.shimmer-close {
+		--glow-color: color-mix(in srgb, var(--cyan) 30%, transparent);
+	}
+
+	@keyframes borderShimmerSweep {
+		0% {
+			background-position: 100% 100%;
+			opacity: 0;
+		}
+		15% {
+			opacity: 1;
+		}
+		85% {
+			opacity: 1;
+		}
+		100% {
+			background-position: 0% 0%;
+			opacity: 0;
+		}
+	}
+
+	@keyframes borderGlow {
+		0% {
+			box-shadow: 0 0 0 0 transparent;
+		}
+		25% {
+			box-shadow: 0 0 24px -2px var(--glow-color, rgba(111, 191, 139, 0.25));
+		}
+		100% {
+			box-shadow: 0 0 0 0 transparent;
+		}
 	}
 
 	.prompt-section {
@@ -251,14 +324,21 @@
 		margin-bottom: 20px;
 	}
 
-	.prompt-label {
-		color: var(--yellow-text);
+	.category-tag {
 		font-family: var(--font-sans);
 		font-size: 11px;
 		font-weight: 700;
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
+		transition: color 0.2s ease;
 	}
+
+	.cat-management { color: var(--cat-management); }
+	.cat-security { color: var(--cat-security); }
+	.cat-networking { color: var(--cat-networking); }
+	.cat-hardware { color: var(--cat-hardware); }
+	.cat-software { color: var(--cat-software); }
+	.cat-general { color: var(--cat-general); }
 
 	.acronym-hero-text {
 		color: var(--text-primary);
@@ -303,6 +383,10 @@
 
 	.log-wrong {
 		color: var(--red);
+	}
+
+	.log-skipped {
+		color: var(--text-muted);
 	}
 
 	.log-desc {
@@ -379,6 +463,12 @@
 		caret-color: transparent;
 	}
 
+	.meaning-input.skipped {
+		border-color: var(--border-strong);
+		color: var(--text-muted);
+		caret-color: transparent;
+	}
+
 	/* Shared base for submit + next + skip — same size, same position */
 	.action-btn {
 		flex-shrink: 0;
@@ -446,6 +536,9 @@
 	}
 
 	.hint-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 5px;
 		background: transparent;
 		border: none;
 		border-radius: var(--radius-sm);
@@ -483,10 +576,6 @@
 		.card-container {
 			padding: 20px 18px 16px;
 			border-radius: var(--radius);
-		}
-
-		.card-header {
-			margin-bottom: 12px;
 		}
 
 		.prompt-section {

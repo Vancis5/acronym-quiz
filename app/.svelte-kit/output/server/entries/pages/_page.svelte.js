@@ -1,4 +1,4 @@
-import { a as attributes, b as clsx, c as element, f as rest_props, g as stringify, h as spread_props, i as attr_style, l as ensure_array_like, m as slot, o as bind_props, p as sanitize_props, r as attr_class, rt as fallback, s as derived, u as head, x as escape_html, y as attr } from "../../chunks/index-server.js";
+import { a as bind_props, b as escape_html, c as ensure_array_like, d as rest_props, f as sanitize_props, h as stringify, i as attributes, l as head, m as spread_props, nt as fallback, o as derived, p as slot, r as attr_class, s as element, v as attr, y as clsx } from "../../chunks/index-server.js";
 //#region node_modules/lucide-svelte/dist/defaultAttributes.js
 /**
 * @license lucide-svelte v1.0.1 - ISC
@@ -372,6 +372,87 @@ function Check($$renderer, $$props) {
 			*
 			*/
 			iconNode: [["path", { "d": "M20 6 9 17l-5-5" }]],
+			children: ($$renderer) => {
+				$$renderer.push(`<!--[-->`);
+				slot($$renderer, $$props, "default", {}, null);
+				$$renderer.push(`<!--]-->`);
+			},
+			$$slots: { default: true }
+		}
+	]));
+}
+//#endregion
+//#region node_modules/lucide-svelte/dist/icons/lightbulb.svelte
+function Lightbulb($$renderer, $$props) {
+	const $$sanitized_props = sanitize_props($$props);
+	/**
+	* @license lucide-svelte v1.0.1 - ISC
+	*
+	* ISC License
+	*
+	* Copyright (c) 2026 Lucide Icons and Contributors
+	*
+	* Permission to use, copy, modify, and/or distribute this software for any
+	* purpose with or without fee is hereby granted, provided that the above
+	* copyright notice and this permission notice appear in all copies.
+	*
+	* THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+	* WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+	* MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+	* ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+	* WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+	* ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+	* OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+	*
+	* ---
+	*
+	* The following Lucide icons are derived from the Feather project:
+	*
+	* airplay, alert-circle, alert-octagon, alert-triangle, aperture, arrow-down-circle, arrow-down-left, arrow-down-right, arrow-down, arrow-left-circle, arrow-left, arrow-right-circle, arrow-right, arrow-up-circle, arrow-up-left, arrow-up-right, arrow-up, at-sign, calendar, cast, check, chevron-down, chevron-left, chevron-right, chevron-up, chevrons-down, chevrons-left, chevrons-right, chevrons-up, circle, clipboard, clock, code, columns, command, compass, corner-down-left, corner-down-right, corner-left-down, corner-left-up, corner-right-down, corner-right-up, corner-up-left, corner-up-right, crosshair, database, divide-circle, divide-square, dollar-sign, download, external-link, feather, frown, hash, headphones, help-circle, info, italic, key, layout, life-buoy, link-2, link, loader, lock, log-in, log-out, maximize, meh, minimize, minimize-2, minus-circle, minus-square, minus, monitor, moon, more-horizontal, more-vertical, move, music, navigation-2, navigation, octagon, pause-circle, percent, plus-circle, plus-square, plus, power, radio, rss, search, server, share, shopping-bag, sidebar, smartphone, smile, square, table-2, tablet, target, terminal, trash-2, trash, triangle, tv, type, upload, x-circle, x-octagon, x-square, x, zoom-in, zoom-out
+	*
+	* The MIT License (MIT) (for the icons listed above)
+	*
+	* Copyright (c) 2013-present Cole Bemis
+	*
+	* Permission is hereby granted, free of charge, to any person obtaining a copy
+	* of this software and associated documentation files (the "Software"), to deal
+	* in the Software without restriction, including without limitation the rights
+	* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	* copies of the Software, and to permit persons to whom the Software is
+	* furnished to do so, subject to the following conditions:
+	*
+	* The above copyright notice and this permission notice shall be included in all
+	* copies or substantial portions of the Software.
+	*
+	* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	* SOFTWARE.
+	*
+	*/
+	Icon($$renderer, spread_props([
+		{ name: "lightbulb" },
+		$$sanitized_props,
+		{
+			/**
+			* @component @name Lightbulb
+			* @description Lucide SVG icon component, renders SVG Element with children.
+			*
+			* @preview ![img](data:image/svg+xml;base64,PHN2ZyAgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIgogIHdpZHRoPSIyNCIKICBoZWlnaHQ9IjI0IgogIHZpZXdCb3g9IjAgMCAyNCAyNCIKICBmaWxsPSJub25lIgogIHN0cm9rZT0iIzAwMCIgc3R5bGU9ImJhY2tncm91bmQtY29sb3I6ICNmZmY7IGJvcmRlci1yYWRpdXM6IDJweCIKICBzdHJva2Utd2lkdGg9IjIiCiAgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIgogIHN0cm9rZS1saW5lam9pbj0icm91bmQiCj4KICA8cGF0aCBkPSJNMTUgMTRjLjItMSAuNy0xLjcgMS41LTIuNSAxLS45IDEuNS0yLjIgMS41LTMuNUE2IDYgMCAwIDAgNiA4YzAgMSAuMiAyLjIgMS41IDMuNS43LjcgMS4zIDEuNSAxLjUgMi41IiAvPgogIDxwYXRoIGQ9Ik05IDE4aDYiIC8+CiAgPHBhdGggZD0iTTEwIDIyaDQiIC8+Cjwvc3ZnPgo=) - https://lucide.dev/icons/lightbulb
+			* @see https://lucide.dev/guide/packages/lucide-svelte - Documentation
+			*
+			* @param {Object} props - Lucide icons props and any valid SVG attribute
+			* @returns {FunctionalComponent} Svelte component
+			*
+			*/
+			iconNode: [
+				["path", { "d": "M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5" }],
+				["path", { "d": "M9 18h6" }],
+				["path", { "d": "M10 22h4" }]
+			],
 			children: ($$renderer) => {
 				$$renderer.push(`<!--[-->`);
 				slot($$renderer, $$props, "default", {}, null);
@@ -810,7 +891,7 @@ function Navbar($$renderer, $$props) {
 		$$renderer.push(`<!--]--></button> <button class="icon-btn svelte-rfuq4y" aria-label="Toggle Sound">`);
 		$$renderer.push("<!--[0-->");
 		Volume_2($$renderer, { size: 18 });
-		$$renderer.push(`<!--]--></button></div></div> <div class="stats-center svelte-rfuq4y"><span class="score-text svelte-rfuq4y">${escape_html(displayScore)}</span> `);
+		$$renderer.push(`<!--]--></button></div></div> <div class="stats-center svelte-rfuq4y"><span${attr_class(`score-text `, "svelte-rfuq4y")}>${escape_html(displayScore)}</span> `);
 		if (streak > 0) {
 			$$renderer.push("<!--[0-->");
 			$$renderer.push(`<span class="streak-text animate-streak-pulse svelte-rfuq4y">×${escape_html(streak)}</span>`);
@@ -843,7 +924,7 @@ function GameCard($$renderer, $$props) {
 		let cleanMeaning = derived(() => item.meaning.trim());
 		let coreMeaning = derived(() => getCoreMeaning(cleanMeaning()));
 		derived(() => coreMeaning().split(/\s+/).filter((w) => w.length > 0));
-		$$renderer.push(`<div${attr_class(`card-container `, "svelte-n3ft5o")}><div class="card-header svelte-n3ft5o"><span class="category-tag svelte-n3ft5o">${escape_html(item.category)}</span></div> <div class="prompt-section svelte-n3ft5o"><div class="prompt-label svelte-n3ft5o">ACRONYM</div> <div class="acronym-hero-text svelte-n3ft5o">${escape_html(item.acronym)}</div></div> <div class="info-zone svelte-n3ft5o">`);
+		$$renderer.push(`<div${attr_class(`card-container `, "svelte-n3ft5o")}><div class="prompt-section svelte-n3ft5o"><div${attr_class(`category-tag cat-${stringify(item.category.toLowerCase())}`, "svelte-n3ft5o")}>${escape_html(item.category)}</div> <div class="acronym-hero-text svelte-n3ft5o">${escape_html(item.acronym)}</div></div> <div class="info-zone svelte-n3ft5o">`);
 		if (item.hint) {
 			$$renderer.push("<!--[1-->");
 			$$renderer.push(`<div class="info-log log-desc svelte-n3ft5o">${escape_html(item.hint)}</div>`);
@@ -854,7 +935,9 @@ function GameCard($$renderer, $$props) {
 			$$renderer.push("<!--[-1-->");
 			$$renderer.push(`<button class="action-btn skip-btn svelte-n3ft5o">SKIP</button>`);
 		}
-		$$renderer.push(`<!--]--></div> <div class="card-footer svelte-n3ft5o"><button class="hint-btn svelte-n3ft5o"${attr("disabled", false, true)}${attr_style("", { visibility: "visible" })}>${escape_html("hint")}</button> `);
+		$$renderer.push(`<!--]--></div> <div class="card-footer svelte-n3ft5o"><button class="hint-btn svelte-n3ft5o"${attr("disabled", false, true)}>`);
+		Lightbulb($$renderer, { size: 13 });
+		$$renderer.push(`<!----> <span>${escape_html("hint")}</span></button> `);
 		$$renderer.push("<!--[-1-->");
 		$$renderer.push(`<!--]--></div></div>`);
 	});
@@ -1743,7 +1826,7 @@ function AcronymListSheet($$renderer, $$props) {
 			const each_array = ensure_array_like(categories);
 			for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
 				let cat = each_array[$$index];
-				$$renderer.push(`<button${attr_class(`cat-chip ${selectedCategory === cat ? "active" : ""}`, "svelte-bjjrro")}>${escape_html(cat)}</button>`);
+				$$renderer.push(`<button${attr_class(`cat-chip ${selectedCategory === cat ? "active" : ""} cat-${stringify(cat.toLowerCase())}`, "svelte-bjjrro")}>${escape_html(cat)}</button>`);
 			}
 			$$renderer.push(`<!--]--></div> <div class="list-wrapper svelte-bjjrro"><!--[-->`);
 			const each_array_1 = ensure_array_like(filteredList());
@@ -1767,9 +1850,91 @@ function AcronymListSheet($$renderer, $$props) {
 	});
 }
 //#endregion
+//#region src/lib/components/RoundCompleteCard.svelte
+function RoundCompleteCard($$renderer, $$props) {
+	$$renderer.component(($$renderer) => {
+		let { score = 0, roundCorrect = 0, roundTotal = 10, maxStreak = 0, accuracy = 0, savedUsername = "", onContinue } = $$props;
+		let username = "";
+		const roundAccuracy = derived(() => roundTotal > 0 ? Math.round(roundCorrect / roundTotal * 100) : 0);
+		$$renderer.push(`<div class="card-container animate-pop-in svelte-gv2vd"><div class="prompt-section svelte-gv2vd"><div class="headline-text svelte-gv2vd">Round Complete</div></div> <div class="stats-zone svelte-gv2vd"><div class="stat-box svelte-gv2vd"><span class="stat-value svelte-gv2vd">${escape_html(roundCorrect)}/${escape_html(roundTotal)}</span> <span class="stat-label svelte-gv2vd">score</span></div> <div class="stat-divider svelte-gv2vd"></div> <div class="stat-box svelte-gv2vd"><span class="stat-value svelte-gv2vd">${escape_html(roundAccuracy())}%</span> <span class="stat-label svelte-gv2vd">round acc</span></div> <div class="stat-divider svelte-gv2vd"></div> <div class="stat-box svelte-gv2vd"><span class="stat-value svelte-gv2vd">${escape_html(maxStreak)}x</span> <span class="stat-label svelte-gv2vd">max streak</span></div> <div class="stat-divider svelte-gv2vd"></div> <div class="stat-box svelte-gv2vd"><span class="stat-value svelte-gv2vd">${escape_html(score)}</span> <span class="stat-label svelte-gv2vd">total pts</span></div></div> <div class="action-row svelte-gv2vd"><input id="round-username-input" type="text" class="username-input svelte-gv2vd" placeholder="username (optional)" maxlength="20"${attr("value", username)} autocomplete="off" autocorrect="off" spellcheck="false" enterkeyhint="go"/> <button class="action-btn next-btn svelte-gv2vd" type="button">NEXT ➔</button></div></div>`);
+	});
+}
+//#endregion
+//#region src/lib/confetti.ts
+function triggerConfettiBurst(count = 60) {
+	if (typeof window === "undefined") return;
+	let canvas = document.getElementById("confetti-canvas");
+	if (!canvas) {
+		canvas = document.createElement("canvas");
+		canvas.id = "confetti-canvas";
+		canvas.style.position = "fixed";
+		canvas.style.inset = "0";
+		canvas.style.width = "100vw";
+		canvas.style.height = "100vh";
+		canvas.style.pointerEvents = "none";
+		canvas.style.zIndex = "9999";
+		document.body.appendChild(canvas);
+	}
+	const ctx = canvas.getContext("2d");
+	if (!ctx) return;
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	const colors = [
+		"#00f2fe",
+		"#7f00ff",
+		"#ff007f",
+		"#ffd700",
+		"#00e676"
+	];
+	const particles = [];
+	const originX = canvas.width / 2;
+	const originY = canvas.height * .7;
+	for (let i = 0; i < count; i++) {
+		const angle = Math.PI * 1.5 + (Math.random() - .5) * 1.2;
+		const speed = 12 + Math.random() * 16;
+		particles.push({
+			x: originX,
+			y: originY,
+			vx: Math.cos(angle) * speed,
+			vy: Math.sin(angle) * speed,
+			size: 2.5 + Math.random() * 3.5,
+			color: colors[Math.floor(Math.random() * colors.length)],
+			alpha: 1,
+			rotation: Math.random() * Math.PI * 2,
+			vRot: (Math.random() - .5) * .2
+		});
+	}
+	function render() {
+		if (!ctx || !canvas) return;
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
+		let activeCount = 0;
+		particles.forEach((p) => {
+			if (p.alpha <= 0) return;
+			activeCount++;
+			p.x += p.vx;
+			p.y += p.vy;
+			p.vy += .45;
+			p.vx *= .98;
+			p.alpha -= .015;
+			p.rotation += p.vRot;
+			ctx.save();
+			ctx.globalAlpha = Math.max(0, p.alpha);
+			ctx.translate(p.x, p.y);
+			ctx.rotate(p.rotation);
+			ctx.fillStyle = p.color;
+			ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+			ctx.restore();
+		});
+		if (activeCount > 0) requestAnimationFrame(render);
+		else ctx.clearRect(0, 0, canvas.width, canvas.height);
+	}
+	render();
+}
+//#endregion
 //#region src/routes/+page.svelte
 function _page($$renderer, $$props) {
 	$$renderer.component(($$renderer) => {
+		const ROUND_SIZE = 10;
 		let currentItemIndex = 0;
 		let score = 0;
 		let streak = 0;
@@ -1779,8 +1944,16 @@ function _page($$renderer, $$props) {
 		let masteredIds = /* @__PURE__ */ new Set();
 		let showLeaderboard = false;
 		let showDictionary = false;
+		let showRoundComplete = false;
+		let roundAnswered = 0;
+		let roundCorrect = 0;
+		let savedUsername = "";
+		let currentRoundNumber = 1;
+		let currentRoundAcronymIds = /* @__PURE__ */ new Set();
+		let previousRoundAcronymIds = /* @__PURE__ */ new Set();
+		let lastSeenRound = /* @__PURE__ */ new Map();
 		let currentItem = derived(() => ACRONYMS[currentItemIndex]);
-		let accuracy = derived(() => totalAnswered > 0 ? correctAnswered / totalAnswered * 100 : 100);
+		let accuracy = derived(() => totalAnswered > 0 ? correctAnswered / totalAnswered * 100 : 0);
 		let multiplier = derived(() => streak >= 10 ? 3 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1);
 		function saveMastered() {
 			try {
@@ -1788,18 +1961,44 @@ function _page($$renderer, $$props) {
 			} catch (e) {}
 		}
 		function pickNextQuestion() {
-			const unmastered = ACRONYMS.filter((a) => !masteredIds.has(a.id));
-			const pool = unmastered.length > 0 ? unmastered : ACRONYMS;
-			let nextIdx = Math.floor(Math.random() * pool.length);
-			let targetItem = pool[nextIdx];
-			if (targetItem.id === currentItem()?.id && ACRONYMS.length > 1) targetItem = pool[(nextIdx + 1) % pool.length];
-			currentItemIndex = ACRONYMS.findIndex((a) => a.id === targetItem.id);
+			let eligible = ACRONYMS.filter((a) => !currentRoundAcronymIds.has(a.id) && !previousRoundAcronymIds.has(a.id));
+			if (eligible.length === 0) eligible = ACRONYMS.filter((a) => !currentRoundAcronymIds.has(a.id));
+			if (eligible.length === 0) eligible = ACRONYMS;
+			const weighted = eligible.map((item) => {
+				let weight = 1;
+				if (!lastSeenRound.has(item.id)) weight = 5;
+				else {
+					const roundsAgo = currentRoundNumber - (lastSeenRound.get(item.id) || 0);
+					weight = Math.max(1, roundsAgo - 1);
+				}
+				if (!masteredIds.has(item.id)) weight *= 1.5;
+				return {
+					item,
+					weight
+				};
+			});
+			const totalWeight = weighted.reduce((sum, entry) => sum + entry.weight, 0);
+			let randomVal = Math.random() * totalWeight;
+			let selected = weighted[0].item;
+			for (const entry of weighted) {
+				if (randomVal < entry.weight) {
+					selected = entry.item;
+					break;
+				}
+				randomVal -= entry.weight;
+			}
+			if (selected.id === currentItem()?.id && eligible.length > 1) selected = eligible.find((a) => a.id !== currentItem().id) || selected;
+			currentRoundAcronymIds.add(selected.id);
+			lastSeenRound.set(selected.id, currentRoundNumber);
+			currentItemIndex = ACRONYMS.findIndex((a) => a.id === selected.id);
 		}
 		function handleAnswer(detail) {
 			const { status, correct, points } = detail;
 			totalAnswered += 1;
+			roundAnswered += 1;
 			if (correct || status === "correct") {
 				correctAnswered += 1;
+				roundCorrect += 1;
 				streak += 1;
 				if (streak > maxStreak) maxStreak = streak;
 				const earned = Math.round(points * multiplier());
@@ -1810,7 +2009,43 @@ function _page($$renderer, $$props) {
 			} else if (status === "close" || status === "almost") {
 				score += points;
 				streak = 0;
+			} else if (status === "skipped") {
+				score = Math.max(0, score - 25);
+				streak = 0;
 			} else streak = 0;
+		}
+		function handleNextQuestion() {
+			if (roundAnswered >= ROUND_SIZE) {
+				triggerConfettiBurst(60);
+				showRoundComplete = true;
+			} else pickNextQuestion();
+		}
+		async function handleRoundContinue(username) {
+			showRoundComplete = false;
+			if (username) {
+				savedUsername = username;
+				try {
+					localStorage.setItem("philnits_username", username);
+				} catch (e) {}
+			}
+			if (username) try {
+				await fetch("/api/leaderboard", {
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						name: username,
+						score,
+						max_streak: maxStreak,
+						accuracy: Math.round(accuracy())
+					})
+				});
+			} catch (e) {}
+			previousRoundAcronymIds = new Set(currentRoundAcronymIds);
+			currentRoundAcronymIds = /* @__PURE__ */ new Set();
+			currentRoundNumber += 1;
+			roundAnswered = 0;
+			roundCorrect = 0;
+			pickNextQuestion();
 		}
 		head("1uha8ag", $$renderer, ($$renderer) => {
 			$$renderer.title(($$renderer) => {
@@ -1824,17 +2059,28 @@ function _page($$renderer, $$props) {
 			openLeaderboard: () => showLeaderboard = true,
 			openDictionary: () => showDictionary = true
 		});
-		$$renderer.push(`<!----> <section class="game-area svelte-1uha8ag">`);
-		if (currentItem()) {
+		$$renderer.push(`<!----> <section class="game-area svelte-1uha8ag"><div class="card-progress-header svelte-1uha8ag"><span class="progress-indicator svelte-1uha8ag">${escape_html(showRoundComplete ? "10 of 10" : `${Math.min(roundAnswered + 1, ROUND_SIZE)} of ${ROUND_SIZE}`)}</span></div> `);
+		if (showRoundComplete) {
 			$$renderer.push("<!--[0-->");
+			RoundCompleteCard($$renderer, {
+				score,
+				roundCorrect,
+				roundTotal: ROUND_SIZE,
+				maxStreak,
+				accuracy: Math.round(accuracy()),
+				savedUsername,
+				onContinue: handleRoundContinue
+			});
+		} else if (currentItem()) {
+			$$renderer.push("<!--[1-->");
 			GameCard($$renderer, {
 				item: currentItem(),
 				streak,
 				onanswer: handleAnswer,
-				onnext: pickNextQuestion
+				onnext: handleNextQuestion
 			});
 		} else $$renderer.push("<!--[-1-->");
-		$$renderer.push(`<!--]--> <div class="session-bar svelte-1uha8ag"><span>Mastered: ${escape_html(masteredIds.size)}/${escape_html(ACRONYMS.length)}</span> <span>Acc: ${escape_html(Math.round(accuracy()))}%</span> <button class="reset-btn svelte-1uha8ag">reset</button></div></section> `);
+		$$renderer.push(`<!--]--> <div class="session-bar svelte-1uha8ag"><span class="stat-item svelte-1uha8ag"><span class="stat-label svelte-1uha8ag">mastered:</span> <span class="stat-value svelte-1uha8ag">${escape_html(masteredIds.size)}/${escape_html(ACRONYMS.length)}</span></span> <span class="stat-item svelte-1uha8ag"><span class="stat-label svelte-1uha8ag">acc:</span> <span class="stat-value svelte-1uha8ag">${escape_html(Math.round(accuracy()))}%</span></span> <button class="reset-btn svelte-1uha8ag" type="button">reset</button></div></section> `);
 		LeaderboardSheet($$renderer, {
 			isOpen: showLeaderboard,
 			currentScore: score,

@@ -16,6 +16,12 @@
   --cyan: #7ec8c8;
   --red: #df7a7a;
   --green: #6fbf8b;
+  --cat-management: #f0a85d;
+  --cat-security: #f27272;
+  --cat-networking: #5ecada;
+  --cat-hardware: #e5be58;
+  --cat-software: #6fcf97;
+  --cat-general: #a0aec0;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
   --radius-sm: 6px;
@@ -40,6 +46,12 @@
   --cyan: #007070;
   --red: #c42a2a;
   --green: #1d7a3e;
+  --cat-management: #c25e00;
+  --cat-security: #c52222;
+  --cat-networking: #027a8c;
+  --cat-hardware: #996500;
+  --cat-software: #18794e;
+  --cat-general: #4a5568;
 }
 
 * {
@@ -48,6 +60,7 @@
 	padding: 0;
 	-webkit-tap-highlight-color: transparent;
 	user-select: none;
+	touch-action: manipulation;
 }
 
 html, body {
@@ -58,11 +71,17 @@ html, body {
   height: 100lvh;
   overflow: hidden;
   overscroll-behavior: none;
+  touch-action: none;
   background: var(--bg);
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Prevent iOS Safari auto-zoom on focus */
+input, select, textarea {
+  font-size: 16px;
 }
 
 /* Vanta Cells Background */
@@ -111,7 +130,7 @@ html, body {
 }
 
 :root.light .vanta-overlay {
-  opacity: 0.45;
+  opacity: 0.82;
 }
 
 /* Theme fade transition */
@@ -130,18 +149,19 @@ html, body {
 }
 
 /* Animations */
-@keyframes headShake {
-	0% { transform: translateX(0); }
-	15% { transform: translateX(-8px) rotate(-2deg); }
-	30% { transform: translateX(8px) rotate(2deg); }
-	45% { transform: translateX(-6px) rotate(-1deg); }
-	60% { transform: translateX(6px) rotate(1deg); }
-	75% { transform: translateX(-3px); }
-	100% { transform: translateX(0); }
+@keyframes elasticShake {
+	0%, 100% { transform: translate3d(0, 0, 0); }
+	12% { transform: translate3d(-10px, 0, 0); }
+	24% { transform: translate3d(8px, 0, 0); }
+	36% { transform: translate3d(-5px, 0, 0); }
+	50% { transform: translate3d(3px, 0, 0); }
+	65% { transform: translate3d(-1.5px, 0, 0); }
+	80% { transform: translate3d(0.5px, 0, 0); }
 }
 
 .animate-shake {
-	animation: headShake 0.45s var(--ease-out);
+	animation: elasticShake 0.5s cubic-bezier(0.25, 1, 0.5, 1) both;
+	will-change: transform;
 }
 
 @keyframes popIn {

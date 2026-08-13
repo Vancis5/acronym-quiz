@@ -65,7 +65,7 @@
 			<div class="category-scroll">
 				{#each categories as cat}
 					<button
-						class="cat-chip {selectedCategory === cat ? 'active' : ''}"
+						class="cat-chip {selectedCategory === cat ? 'active' : ''} cat-{cat.toLowerCase()}"
 						onclick={() => (selectedCategory = cat)}
 					>
 						{cat}
@@ -107,8 +107,7 @@
 		width: 100%;
 		max-width: 540px;
 		height: 620px;
-		max-height: 85vh;
-		min-height: 480px;
+		max-height: 85dvh;
 		background: color-mix(in srgb, var(--bg-card) 85%, transparent);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
@@ -128,7 +127,7 @@
 	}
 
 	.title {
-		font-family: var(--font-sans);
+		font-family: var(--font-mono);
 		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--text-primary);
@@ -188,6 +187,7 @@
 		border-radius: var(--radius-full);
 		padding: 6px 12px;
 		font-size: 0.75rem;
+		font-weight: 600;
 		cursor: pointer;
 		white-space: nowrap;
 		flex-shrink: 0;
@@ -200,48 +200,137 @@
 	}
 
 	.cat-chip.active {
-		border-color: var(--cyan);
-		color: var(--cyan);
+		background: var(--text-primary);
+		border-color: var(--text-primary);
+		color: var(--bg);
+	}
+
+	.cat-chip.active.cat-management {
+		background: var(--cat-management);
+		border-color: var(--cat-management);
+		color: #1a1a1a;
+	}
+
+	.cat-chip.active.cat-security {
+		background: var(--cat-security);
+		border-color: var(--cat-security);
+		color: #1a1a1a;
+	}
+
+	.cat-chip.active.cat-networking {
+		background: var(--cat-networking);
+		border-color: var(--cat-networking);
+		color: #1a1a1a;
+	}
+
+	.cat-chip.active.cat-hardware {
+		background: var(--cat-hardware);
+		border-color: var(--cat-hardware);
+		color: #1a1a1a;
+	}
+
+	.cat-chip.active.cat-software {
+		background: var(--cat-software);
+		border-color: var(--cat-software);
+		color: #1a1a1a;
+	}
+
+	.cat-chip.active.cat-general {
+		background: var(--cat-general);
+		border-color: var(--cat-general);
+		color: #1a1a1a;
+	}
+
+	:global(:root.light) .cat-chip.active:not(.cat-all) {
+		color: #ffffff;
 	}
 
 	.list-wrapper {
 		flex: 1;
 		overflow-y: auto;
+		overflow-x: hidden;
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 	}
 
 	.list-row {
 		display: flex;
 		align-items: flex-start;
 		border-bottom: 1px solid var(--border);
-		padding: 10px 0;
-		gap: 16px;
+		padding: 11px 4px;
+		gap: 20px;
+		width: 100%;
+		min-width: 0;
 	}
 
 	.acronym-col {
 		display: flex;
 		align-items: center;
 		gap: 8px;
-		min-width: 100px;
+		width: 120px;
+		min-width: 108px;
+		flex-shrink: 0;
+		padding-left: 12px;
 	}
 
 	.acronym-code {
 		font-family: var(--font-mono);
 		font-weight: 700;
 		color: var(--text-primary);
+		font-size: 0.95rem;
 	}
 
 	.mastered-icon {
 		color: var(--green);
 		font-size: 0.9rem;
 		font-weight: bold;
+		display: inline-flex;
+		align-items: center;
+		flex-shrink: 0;
 	}
 
 	.meaning-col {
 		flex: 1;
+		min-width: 0;
 		color: var(--text-secondary);
 		font-size: 0.9rem;
-		line-height: 1.4;
+		line-height: 1.45;
+		word-break: break-word;
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 640px) {
+		.overlay {
+			padding: 12px;
+		}
+
+		.sheet-container {
+			padding: 20px 16px;
+			height: 85dvh;
+			max-height: 620px;
+			gap: 14px;
+			border-radius: var(--radius);
+		}
+
+		.list-row {
+			padding: 10px 2px;
+			gap: 16px;
+		}
+
+		.acronym-col {
+			width: 108px;
+			min-width: 98px;
+			padding-left: 10px;
+			gap: 6px;
+		}
+
+		.acronym-code {
+			font-size: 0.9rem;
+		}
+
+		.meaning-col {
+			font-size: 0.86rem;
+		}
 	}
 </style>

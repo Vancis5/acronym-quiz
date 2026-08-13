@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { X } from 'lucide-svelte';
+	import { X, RotateCcw } from 'lucide-svelte';
 	import { fade, fly } from 'svelte/transition';
 	import type { LeaderboardEntry } from '../../routes/api/leaderboard/+server';
 
@@ -26,7 +26,13 @@
 	async function fetchLeaderboard() {
 		isLoading = true;
 		try {
-			const res = await fetch('/api/leaderboard');
+			const res = await fetch(`/api/leaderboard?_t=${Date.now()}`, {
+				cache: 'no-store',
+				headers: {
+					'Cache-Control': 'no-cache',
+					'Pragma': 'no-cache'
+				}
+			});
 			const data = (await res.json()) as { success: boolean; leaderboard: LeaderboardEntry[] };
 			if (data.success) {
 				leaderboard = data.leaderboard;
@@ -57,9 +63,14 @@
 		<div class="sheet-container" transition:fly={{ y: 8, duration: 200 }}>
 			<div class="sheet-header">
 				<h2 class="title">LEADERBOARD</h2>
-				<button class="close-btn" onclick={close} aria-label="Close">
-					<X size={20} />
-				</button>
+				<div class="header-actions">
+					<button class="icon-btn" onclick={fetchLeaderboard} aria-label="Refresh leaderboard" title="Refresh">
+						<RotateCcw size={18} class={isLoading ? 'spin-icon' : ''} />
+					</button>
+					<button class="icon-btn" onclick={close} aria-label="Close">
+						<X size={20} />
+					</button>
+				</div>
 			</div>
 
 			<div class="list-wrapper">
@@ -101,8 +112,7 @@
 		width: 100%;
 		max-width: 540px;
 		height: 620px;
-		max-height: 85vh;
-		min-height: 480px;
+		max-height: 85dvh;
 		background: color-mix(in srgb, var(--bg-card) 85%, transparent);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
@@ -122,25 +132,37 @@
 	}
 
 	.title {
-		font-family: var(--font-sans);
+		font-family: var(--font-mono);
 		font-size: 1.2rem;
 		font-weight: 700;
 		color: var(--text-primary);
 	}
 
-	.close-btn {
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.icon-btn {
 		background: transparent;
 		border: none;
 		border-radius: var(--radius-sm);
 		color: var(--text-primary);
 		cursor: pointer;
 		display: flex;
+		align-items: center;
+		justify-content: center;
 		padding: 4px;
-		transition: background-color 0.15s ease;
+		transition: background-color 0.15s ease, color 0.15s ease;
 	}
 
-	.close-btn:hover {
+	.icon-btn:hover {
 		background: var(--bg-hover);
+	}
+
+	:global(.spin-icon) {
+		animation: spin 0.8s linear infinite;
 	}
 
 	.list-wrapper {
@@ -162,8 +184,8 @@
 	.spinner {
 		width: 24px;
 		height: 24px;
-		border: 2px solid transparent;
-		border-top-color: var(--yellow);
+		border: 2px solid var(--border);
+		border-top-color: var(--text-primary);
 		border-radius: 50%;
 		animation: spin 0.8s linear infinite;
 	}
@@ -184,12 +206,40 @@
 		font-family: var(--font-mono);
 		font-weight: 700;
 		min-width: 32px;
-		color: var(--text-secondary);
+		color: var(--text-muted);
 	}
 
-	.rank-gold .rank-pos, .rank-gold .score-val { color: var(--yellow-text); }
-	.rank-silver .rank-pos, .rank-silver .score-val { color: #c0c0c0; }
-	.rank-bronze .rank-pos, .rank-bronze .score-val { color: #cd7f32; }
+	/* Top 3 metallic accents - Dark */
+	.rank-gold .rank-pos,
+	.rank-gold .score-val {
+		color: #f3c343;
+	}
+
+	.rank-silver .rank-pos,
+	.rank-silver .score-val {
+		color: #d4d4d8;
+	}
+
+	.rank-bronze .rank-pos,
+	.rank-bronze .score-val {
+		color: #e89758;
+	}
+
+	/* Top 3 metallic accents - Light */
+	:global(:root.light) .rank-gold .rank-pos,
+	:global(:root.light) .rank-gold .score-val {
+		color: #966c00;
+	}
+
+	:global(:root.light) .rank-silver .rank-pos,
+	:global(:root.light) .rank-silver .score-val {
+		color: #52525b;
+	}
+
+	:global(:root.light) .rank-bronze .rank-pos,
+	:global(:root.light) .rank-bronze .score-val {
+		color: #9c4915;
+	}
 
 	.rank-info {
 		flex: 1;
@@ -198,6 +248,7 @@
 	}
 
 	.player-name {
+		font-size: 0.85rem;
 		font-weight: 600;
 		color: var(--text-primary);
 	}
@@ -210,6 +261,20 @@
 	.score-val {
 		font-family: var(--font-mono);
 		font-weight: 700;
-		color: var(--cyan);
+		color: var(--text-primary);
+	}
+
+	@media (max-width: 640px) {
+		.overlay {
+			padding: 12px;
+		}
+
+		.sheet-container {
+			padding: 20px 16px;
+			height: 85dvh;
+			max-height: 620px;
+			gap: 14px;
+			border-radius: var(--radius);
+		}
 	}
 </style>
