@@ -40,6 +40,6 @@ declare module "$app/types" {
 		};
 		Pathname(): "/" | "/api/leaderboard";
 		ResolvedPathname(): `${"" | `/${string}`}${ReturnType<AppTypes['Pathname']>}`;
-		Asset(): "/robots.txt" | string & {};
+		Asset(): "/p5.min.js" | "/robots.txt" | "/three.r134.min.js" | "/vanta.cells.min.js" | "/vanta.topology.min.js" | string & {};
 	}
 }

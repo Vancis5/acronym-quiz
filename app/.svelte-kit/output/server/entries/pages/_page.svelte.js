@@ -839,7 +839,6 @@ function GameCard($$renderer, $$props) {
 	$$renderer.component(($$renderer) => {
 		let { item, streak = 0, onanswer, onnext } = $$props;
 		let inputValue = "";
-		let isSubmitted = false;
 		derived(() => item.acronym.trim());
 		let cleanMeaning = derived(() => item.meaning.trim());
 		let coreMeaning = derived(() => getCoreMeaning(cleanMeaning()));
@@ -849,9 +848,12 @@ function GameCard($$renderer, $$props) {
 			$$renderer.push("<!--[1-->");
 			$$renderer.push(`<div class="info-log log-desc svelte-n3ft5o">${escape_html(item.hint)}</div>`);
 		} else $$renderer.push("<!--[-1-->");
-		$$renderer.push(`<!--]--></div> <div class="action-row svelte-n3ft5o"><input id="meaning-text-input" type="text"${attr_class(`meaning-input ${stringify("")}`, "svelte-n3ft5o")} placeholder="Enter meaning..."${attr("value", inputValue)}${attr("disabled", isSubmitted, true)} autocomplete="off" autocorrect="off"/> `);
-		$$renderer.push("<!--[-1-->");
-		$$renderer.push(`<button class="action-btn submit-btn svelte-n3ft5o"${attr("disabled", !inputValue.trim(), true)}>SUBMIT</button>`);
+		$$renderer.push(`<!--]--></div> <div class="action-row svelte-n3ft5o"><input id="meaning-text-input" type="text"${attr_class(`meaning-input ${stringify("")}`, "svelte-n3ft5o")} placeholder="Enter meaning..."${attr("value", inputValue)} autocomplete="off" autocorrect="off"${attr("enterkeyhint", "go")}/> `);
+		if (inputValue.trim());
+		else {
+			$$renderer.push("<!--[-1-->");
+			$$renderer.push(`<button class="action-btn skip-btn svelte-n3ft5o">SKIP</button>`);
+		}
 		$$renderer.push(`<!--]--></div> <div class="card-footer svelte-n3ft5o"><button class="hint-btn svelte-n3ft5o"${attr("disabled", false, true)}${attr_style("", { visibility: "visible" })}>${escape_html("hint")}</button> `);
 		$$renderer.push("<!--[-1-->");
 		$$renderer.push(`<!--]--></div></div>`);
@@ -1157,7 +1159,7 @@ var ACRONYMS = [
 		acronym: "Fintech",
 		meaning: "Financial Technology",
 		category: "Management",
-		hint: "marrying code with money like Cash App or crypto wallets"
+		hint: "marrying code with money like GCash or crypto wallets"
 	},
 	{
 		id: 40,

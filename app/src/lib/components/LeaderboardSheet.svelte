@@ -103,7 +103,9 @@
 		height: 620px;
 		max-height: 85vh;
 		min-height: 480px;
-		background: var(--bg-card);
+		background: color-mix(in srgb, var(--bg-card) 85%, transparent);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 		border: 1px solid var(--border-strong);
 		border-radius: var(--radius-lg);
 		display: flex;

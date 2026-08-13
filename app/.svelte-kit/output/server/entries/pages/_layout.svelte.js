@@ -9,7 +9,7 @@ function _layout($$renderer, $$props) {
 		head("12qhfyh", $$renderer, ($$renderer) => {
 			$$renderer.push(`<link rel="icon"${attr("href", favicon_default)}/>`);
 		});
-		$$renderer.push(`<div class="bg-ambient" aria-hidden="true"><div class="bg-liquid-wrap"><div class="bg-orb bg-orb-1"></div> <div class="bg-orb bg-orb-2"></div> <div class="bg-orb bg-orb-3"></div></div> <div class="bg-ambient-noise"></div></div> `);
+		$$renderer.push(`<div class="vanta-bg" aria-hidden="true"></div> `);
 		children($$renderer);
 		$$renderer.push(`<!---->`);
 	});

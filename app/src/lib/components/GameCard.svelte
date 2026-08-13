@@ -216,7 +216,9 @@
 <style>
 	.card-container {
 		width: 100%;
-		background: var(--bg-card);
+		background: color-mix(in srgb, var(--bg-card) 80%, transparent);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
 		border: 1px solid var(--border-strong);
 		border-radius: var(--radius-lg);
 		padding: 28px 28px 24px;

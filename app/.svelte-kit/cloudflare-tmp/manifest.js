@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["robots.txt"]),
-	mimeTypes: {".txt":"text/plain"},
+	assets: new Set(["p5.min.js","robots.txt","vanta.topology.min.js"]),
+	mimeTypes: {".js":"text/javascript",".txt":"text/plain"},
 	_: {
-		client: {start:"_app/immutable/entry/start.ByFFRRPU.js",app:"_app/immutable/entry/app.CBnxpDD6.js",imports:["_app/immutable/entry/start.ByFFRRPU.js","_app/immutable/chunks/DlMnFILR.js","_app/immutable/chunks/3YTWd9cS.js","_app/immutable/entry/app.CBnxpDD6.js","_app/immutable/chunks/3YTWd9cS.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.CCOfBNnw.js",app:"_app/immutable/entry/app.UTWGXykS.js",imports:["_app/immutable/entry/start.CCOfBNnw.js","_app/immutable/chunks/DDo3SVso.js","_app/immutable/chunks/DtMS2cfH.js","_app/immutable/entry/app.UTWGXykS.js","_app/immutable/chunks/DtMS2cfH.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),

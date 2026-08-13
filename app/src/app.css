@@ -65,162 +65,53 @@ html, body {
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
-/* Ambient background system */
-.bg-ambient {
+/* Vanta Cells Background */
+.vanta-bg {
   position: fixed;
-  inset: -50px;
-  width: calc(100vw + 100px);
-  height: calc(100lvh + 100px);
-  min-height: calc(100vh + 100px);
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100lvh;
+  min-height: 100vh;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
   background-color: var(--bg);
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: background-color 0.25s ease;
 }
 
-/* Animated dot grid mesh */
-.bg-ambient::before {
-  content: '';
-  position: absolute;
-  inset: -50px;
-  background-image: radial-gradient(var(--border-strong) 1.2px, transparent 1.2px);
-  background-size: 28px 28px;
-  opacity: 0.7;
-  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 85%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 85%);
-  animation: gridDrift 40s linear infinite;
-}
-
-/* Liquid glow container */
-.bg-liquid-wrap {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 140vmax;
-  height: 140vmax;
-  transform: translate(-50%, -50%);
-  animation: liquidOrbit 42s linear infinite;
+.vanta-bg canvas,
+.vanta-bg .vanta-canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   pointer-events: none;
 }
 
-/* Breathing & morphing liquid orbs */
-.bg-orb {
-  position: absolute;
-  border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%;
-  filter: blur(90px);
-  opacity: 0.16;
+.vanta-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100lvh;
+  min-height: 100vh;
+  z-index: 1;
   pointer-events: none;
-  will-change: transform, border-radius;
-  transform-origin: center center;
+  background-color: var(--bg);
+  opacity: 0;
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  transition: opacity 0.25s ease, background-color 0.25s ease;
 }
 
-.bg-orb-1 {
-  width: 55vmax;
-  height: 55vmax;
-  background: var(--yellow);
-  top: 15%;
-  left: 15%;
-  animation: liquidMorph1 24s ease-in-out infinite alternate;
-}
-
-.bg-orb-2 {
-  width: 58vmax;
-  height: 58vmax;
-  background: var(--cyan);
-  bottom: 15%;
-  right: 15%;
-  animation: liquidMorph2 28s ease-in-out infinite alternate;
-}
-
-.bg-orb-3 {
-  width: 46vmax;
-  height: 46vmax;
-  background: var(--green);
-  top: 35%;
-  right: 25%;
-  opacity: 0.10;
-  animation: liquidMorph3 32s ease-in-out infinite alternate;
-}
-
-/* Noise grain overlay */
-.bg-ambient-noise {
-  position: absolute;
-  inset: 0;
-  opacity: 0.035;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n' x='0' y='0'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-repeat: repeat;
-  background-size: 220px 220px;
-}
-
-:root.light .bg-orb {
-  opacity: 0.13;
-}
-
-:root.light .bg-orb-3 {
-  opacity: 0.08;
-}
-
-@keyframes gridDrift {
-  0% { transform: translate(0, 0); }
-  100% { transform: translate(28px, 28px); }
-}
-
-@keyframes liquidOrbit {
-  0% { transform: translate(-50%, -50%) rotate(0deg); }
-  100% { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
-@keyframes liquidMorph1 {
-  0% {
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  33% {
-    border-radius: 70% 30% 46% 54% / 30% 29% 71% 70%;
-    transform: translate(80px, -40px) scale(1.18) rotate(120deg);
-  }
-  66% {
-    border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%;
-    transform: translate(-50px, 60px) scale(0.9) rotate(240deg);
-  }
-  100% {
-    border-radius: 42% 58% 70% 30% / 45% 45% 55% 55%;
-    transform: translate(0, 0) scale(1) rotate(360deg);
-  }
-}
-
-@keyframes liquidMorph2 {
-  0% {
-    border-radius: 70% 30% 52% 48% / 65% 55% 45% 35%;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  33% {
-    border-radius: 30% 70% 70% 30% / 50% 60% 40% 50%;
-    transform: translate(-90px, 50px) scale(1.22) rotate(-120deg);
-  }
-  66% {
-    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
-    transform: translate(60px, -70px) scale(0.85) rotate(-240deg);
-  }
-  100% {
-    border-radius: 70% 30% 52% 48% / 65% 55% 45% 35%;
-    transform: translate(0, 0) scale(1) rotate(-360deg);
-  }
-}
-
-@keyframes liquidMorph3 {
-  0% {
-    border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
-    transform: translate(0, 0) scale(1) rotate(0deg);
-  }
-  50% {
-    border-radius: 35% 65% 60% 40% / 40% 70% 30% 60%;
-    transform: translate(-60px, -60px) scale(1.25) rotate(180deg);
-  }
-  100% {
-    border-radius: 60% 40% 40% 60% / 50% 50% 50% 50%;
-    transform: translate(0, 0) scale(1) rotate(360deg);
-  }
+:root.light .vanta-overlay {
+  opacity: 0.45;
 }
 
 /* Theme fade transition */
