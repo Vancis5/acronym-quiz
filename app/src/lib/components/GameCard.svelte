@@ -1,8 +1,7 @@
 <script lang="ts">
-	import { ACRONYMS, type AcronymItem } from '$lib/data/acronyms';
+	import { type AcronymItem } from '$lib/data/acronyms';
 	import { playPopSound, playCorrectSound, playWrongSound } from '$lib/audio';
-	import { triggerConfettiBurst } from '$lib/confetti';
-	import { Lightbulb, CheckCircle2, XCircle, ArrowRight, Keyboard, Touchpad } from 'lucide-svelte';
+	import { Lightbulb } from 'lucide-svelte';
 
 	let {
 		item,
@@ -16,83 +15,40 @@
 		onnext?: () => void;
 	} = $props();
 
-	let inputValues = $state<string[]>([]);
+	let inputValue = $state('');
 	let isSubmitted = $state(false);
 	let isCorrect = $state(false);
 	let isShaking = $state(false);
 	let hintLevel = $state(0);
-	let mode = $state<'type' | 'tap'>('type');
-	let tapChoices = $state<string[]>([]);
 
 	let cleanAcronym = $derived(item.acronym.trim());
+	let cleanMeaning = $derived(item.meaning.trim());
+	let wordsInMeaning = $derived(cleanMeaning.split(/\s+/));
 
 	$effect(() => {
 		if (item) {
-			inputValues = Array(cleanAcronym.length).fill('');
+			inputValue = '';
 			isSubmitted = false;
 			isCorrect = false;
 			isShaking = false;
 			hintLevel = 0;
-			generateTapChoices();
-			setTimeout(() => focusFirstInput(), 50);
+			setTimeout(() => focusInput(), 50);
 		}
 	});
 
-	function generateTapChoices() {
-		const correct = item.acronym;
-		const decoys = ACRONYMS
-			.filter((a) => a.id !== item.id)
-			.map((a) => a.acronym);
-		
-		const shuffled = [...decoys].sort(() => Math.random() - 0.5).slice(0, 3);
-		tapChoices = [correct, ...shuffled].sort(() => Math.random() - 0.5);
+	function focusInput() {
+		const el = document.getElementById('meaning-text-input');
+		if (el) (el as HTMLInputElement).focus();
 	}
 
-	function focusFirstInput() {
-		if (mode !== 'type') return;
-		const firstInput = document.getElementById('letter-input-0');
-		if (firstInput) (firstInput as HTMLInputElement).focus();
+	function checkAnswer() {
+		if (isSubmitted || !inputValue.trim()) return;
+		const normalize = (str: string) => str.toLowerCase().replace(/[^a-z0-9]/g, '');
+		evaluateResult(normalize(inputValue) === normalize(cleanMeaning));
 	}
 
-	function handleInput(index: number, e: Event) {
-		const target = e.target as HTMLInputElement;
-		const val = target.value.slice(-1);
-		inputValues[index] = val;
-		playPopSound();
-
-		if (val && index < cleanAcronym.length - 1) {
-			const nextInput = document.getElementById(`letter-input-${index + 1}`);
-			if (nextInput) (nextInput as HTMLInputElement).focus();
-		}
-
-		if (inputValues.every((v) => v.length > 0)) {
-			checkTypedAnswer();
-		}
-	}
-
-	function handleKeyDown(index: number, e: KeyboardEvent) {
-		if (e.key === 'Backspace' && !inputValues[index] && index > 0) {
-			const prevInput = document.getElementById(`letter-input-${index - 1}`);
-			if (prevInput) {
-				(prevInput as HTMLInputElement).focus();
-				inputValues[index - 1] = '';
-			}
-		} else if (e.key === 'Enter') {
-			checkTypedAnswer();
-		}
-	}
-
-	function checkTypedAnswer() {
-		if (isSubmitted) return;
-		const guess = inputValues.join('').toLowerCase();
-		const target = cleanAcronym.toLowerCase();
-		evaluateResult(guess === target);
-	}
-
-	function handleTapChoice(choice: string) {
-		if (isSubmitted) return;
-		playPopSound();
-		evaluateResult(choice.toLowerCase() === cleanAcronym.toLowerCase());
+	function handleKeyDown(e: KeyboardEvent) {
+		if (e.key === 'Enter') checkAnswer();
 	}
 
 	function evaluateResult(correct: boolean) {
@@ -100,17 +56,13 @@
 		isCorrect = correct;
 
 		if (correct) {
-			const points = Math.max(20, (100 + streak * 25) - (hintLevel * 20));
+			const points = Math.max(20, 100 + streak * 25 - hintLevel * 20);
 			playCorrectSound(streak + 1);
-			triggerConfettiBurst(50 + streak * 10);
-
 			if (onanswer) onanswer({ correct: true, points });
 		} else {
 			isShaking = true;
 			playWrongSound();
-			setTimeout(() => {
-				isShaking = false;
-			}, 500);
+			setTimeout(() => (isShaking = false), 500);
 			if (onanswer) onanswer({ correct: false, points: 0 });
 		}
 	}
@@ -125,120 +77,70 @@
 	function handleNext() {
 		if (onnext) onnext();
 	}
-
-	function toggleMode() {
-		mode = mode === 'type' ? 'tap' : 'type';
-		playPopSound();
-		if (mode === 'type') setTimeout(focusFirstInput, 50);
-	}
-
-	function getCategoryColor(cat: string) {
-		switch (cat) {
-			case 'Networking': return '#00f2fe';
-			case 'Security': return '#ff007f';
-			case 'Hardware': return '#ffd700';
-			case 'Management': return '#a855f7';
-			case 'Software': return '#00e676';
-			default: return '#94a3b8';
-		}
-	}
 </script>
 
-<div class="card-container glass-panel {isShaking ? 'animate-shake' : ''}">
+<div class="card-container {isShaking ? 'animate-shake' : ''}">
 	<div class="card-header">
-		<span
-			class="category-tag"
-			style="color: {getCategoryColor(item.category)}; border-color: {getCategoryColor(item.category)}40; background: {getCategoryColor(item.category)}15"
-		>
-			{item.category}
-		</span>
-
-		<button class="mode-toggle-btn" onclick={toggleMode} title="Switch Input Mode">
-			{#if mode === 'type'}
-				<Keyboard size={15} /> Type Mode
-			{:else}
-				<Touchpad size={15} /> Tap Mode
-			{/if}
-		</button>
+		<span class="category-tag">{item.category}</span>
 	</div>
 
-	<div class="meaning-section">
-		<p class="meaning-label">WHAT ACRONYM STANDS FOR:</p>
-		<h2 class="meaning-text">{item.meaning}</h2>
+	<div class="prompt-section">
+		<div class="prompt-label">ACRONYM</div>
+		<div class="acronym-hero-text">{item.acronym}</div>
 	</div>
 
 	{#if hintLevel > 0}
-		<div class="hint-banner animate-bounce-pop">
-			<Lightbulb size={16} color="#ffd700" />
+		<div class="hint-banner animate-pop-in">
+			<Lightbulb size={12} />
 			{#if hintLevel === 1}
-				<span>Length: <strong>{cleanAcronym.length} characters</strong></span>
-			{:else if hintLevel === 2}
-				<span>First letter: <strong>"{cleanAcronym[0]}"</strong> ({cleanAcronym.length} chars)</span>
+				{wordsInMeaning.length} words ({cleanMeaning.length} chars)
+			{:else}
+				Initials: {wordsInMeaning.map((w) => w[0]?.toUpperCase() || '').join(' ')}
 			{/if}
 		</div>
 	{/if}
 
 	<div class="input-section">
-		{#if mode === 'type'}
-			<div class="letter-boxes">
-				{#each Array(cleanAcronym.length) as _, i}
-					<input
-						id="letter-input-{i}"
-						type="text"
-						maxlength="2"
-						class="letter-box {isSubmitted ? (isCorrect ? 'correct' : 'wrong') : ''}"
-						value={inputValues[i] || ''}
-						disabled={isSubmitted}
-						oninput={(e) => handleInput(i, e)}
-						onkeydown={(e) => handleKeyDown(i, e)}
-						autocomplete="off"
-						autocorrect="off"
-						autocapitalize="characters"
-					/>
-				{/each}
-			</div>
-		{:else}
-			<div class="tap-grid">
-				{#each tapChoices as choice}
-					<button
-						class="tap-chip {isSubmitted && choice === item.acronym ? 'correct-chip' : ''} {isSubmitted && !isCorrect && inputValues.join('') === choice ? 'wrong-chip' : ''}"
-						disabled={isSubmitted}
-						onclick={() => handleTapChoice(choice)}
-					>
-						{choice}
-					</button>
-				{/each}
-			</div>
-		{/if}
+		<div class="full-text-input-wrap">
+			<input
+				id="meaning-text-input"
+				type="text"
+				class="meaning-input {isSubmitted ? (isCorrect ? 'correct' : 'wrong') : ''}"
+				placeholder="Type what {cleanAcronym} stands for..."
+				bind:value={inputValue}
+				disabled={isSubmitted}
+				onkeydown={handleKeyDown}
+				autocomplete="off"
+				autocorrect="off"
+			/>
+			<button
+				class="submit-btn"
+				onclick={checkAnswer}
+				disabled={isSubmitted || !inputValue.trim()}
+				style:opacity={isSubmitted ? '0' : '1'}
+				style:pointer-events={isSubmitted ? 'none' : 'auto'}
+			>
+				SUBMIT
+			</button>
+		</div>
 	</div>
 
 	<div class="card-footer">
 		{#if !isSubmitted}
 			<button class="hint-btn" onclick={triggerHint} disabled={hintLevel >= 2}>
-				<Lightbulb size={16} />
-				{hintLevel === 0 ? 'Get Hint' : hintLevel === 1 ? 'More Hint' : 'No More Hints'}
+				{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}
 			</button>
+			<div class="next-btn-placeholder"></div>
 		{:else}
-			<div class="result-banner {isCorrect ? 'result-success' : 'result-failure'} animate-bounce-pop">
-				<div class="result-text">
+			<div class="result-banner animate-pop-in">
+				<div class="result-text {isCorrect ? 'text-correct' : 'text-wrong'}">
 					{#if isCorrect}
-						<CheckCircle2 size={24} color="#00e676" />
-						<div>
-							<strong>Correct!</strong>
-							<span class="answer-reveal">{item.acronym}</span>
-						</div>
+						CORRECT — {item.meaning}
 					{:else}
-						<XCircle size={24} color="#ff3d00" />
-						<div>
-							<strong>Answer:</strong>
-							<span class="answer-reveal">{item.acronym}</span>
-						</div>
+						ANSWER: {item.meaning}
 					{/if}
 				</div>
-
-				<button class="bouncy-btn btn-primary next-btn" onclick={handleNext}>
-					Next <ArrowRight size={18} />
-				</button>
+				<button class="next-btn" onclick={handleNext}>NEXT ➔</button>
 			</div>
 		{/if}
 	</div>
@@ -247,243 +149,180 @@
 <style>
 	.card-container {
 		width: 100%;
-		max-width: 500px;
-		margin: 0 auto;
-		padding: 24px 20px;
+		background: var(--bg-card);
+		border: 1px solid var(--border-strong);
+		border-radius: 0;
+		padding: 32px 28px;
+		min-height: 380px;
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
-		position: relative;
+		justify-content: space-between;
+		gap: 24px;
 	}
 
 	.card-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
 	}
 
 	.category-tag {
-		font-size: 0.75rem;
-		font-weight: 700;
+		font-family: var(--font-mono);
+		font-size: 11px;
+		color: var(--text-muted);
 		text-transform: uppercase;
-		letter-spacing: 0.06em;
-		padding: 4px 10px;
-		border-radius: 12px;
-		border: 1px solid;
+		letter-spacing: 0.05em;
 	}
 
-	.mode-toggle-btn {
-		background: rgba(255, 255, 255, 0.06);
-		border: 1px solid var(--border-light);
-		color: var(--text-secondary);
-		padding: 4px 10px;
-		border-radius: 12px;
-		font-size: 0.75rem;
-		font-weight: 600;
+	.prompt-section {
 		display: flex;
-		align-items: center;
+		flex-direction: column;
 		gap: 6px;
-		cursor: pointer;
-		transition: background 0.2s;
 	}
 
-	.mode-toggle-btn:hover {
-		background: rgba(255, 255, 255, 0.12);
-		color: #ffffff;
-	}
-
-	.meaning-section {
-		text-align: center;
-		padding: 10px 0;
-	}
-
-	.meaning-label {
-		font-size: 0.7rem;
-		font-weight: 800;
-		color: var(--primary-cyan);
+	.prompt-label {
+		color: var(--yellow);
+		font-family: var(--font-mono);
+		font-size: 11px;
+		text-transform: uppercase;
 		letter-spacing: 0.1em;
-		margin-bottom: 8px;
 	}
 
-	.meaning-text {
-		font-size: 1.45rem;
-		font-weight: 800;
-		line-height: 1.35;
+	.acronym-hero-text {
 		color: var(--text-primary);
-		letter-spacing: -0.01em;
+		font-family: var(--font-mono);
+		font-size: 2.8rem;
+		font-weight: 800;
+		letter-spacing: 0.05em;
+		line-height: 1.1;
 	}
 
 	.hint-banner {
-		background: rgba(255, 215, 0, 0.1);
-		border: 1px solid rgba(255, 215, 0, 0.3);
-		color: #ffd700;
-		padding: 10px 14px;
-		border-radius: 14px;
-		font-size: 0.85rem;
+		color: var(--yellow);
+		font-size: 0.8rem;
+		font-family: var(--font-mono);
 		display: flex;
 		align-items: center;
-		justify-content: center;
-		gap: 8px;
+		gap: 6px;
 	}
 
 	.input-section {
 		display: flex;
 		justify-content: center;
-		margin: 10px 0;
-	}
-
-	.letter-boxes {
-		display: flex;
-		gap: 8px;
-		flex-wrap: wrap;
-		justify-content: center;
-	}
-
-	.letter-box {
-		width: 48px;
-		height: 58px;
-		border-radius: 14px;
-		background: rgba(255, 255, 255, 0.05);
-		border: 2px solid rgba(255, 255, 255, 0.15);
-		color: #ffffff;
-		font-family: var(--font-mono);
-		font-size: 1.5rem;
-		font-weight: 800;
-		text-align: center;
-		text-transform: uppercase;
-		outline: none;
-		transition: border-color 0.2s, transform 0.2s var(--ease-bounce), box-shadow 0.2s;
-	}
-
-	.letter-box:focus {
-		border-color: var(--primary-cyan);
-		box-shadow: 0 0 16px rgba(0, 242, 254, 0.4);
-		transform: scale(1.06);
-		background: rgba(0, 242, 254, 0.1);
-	}
-
-	.letter-box.correct {
-		border-color: var(--success-green);
-		background: rgba(0, 230, 118, 0.15);
-		color: var(--success-green);
-	}
-
-	.letter-box.wrong {
-		border-color: var(--error-red);
-		background: rgba(255, 61, 0, 0.15);
-		color: var(--error-red);
-	}
-
-	.tap-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: 12px;
 		width: 100%;
 	}
 
-	.tap-chip {
-		padding: 16px;
-		border-radius: 16px;
-		background: rgba(255, 255, 255, 0.06);
-		border: 1px solid var(--border-light);
-		color: #ffffff;
+	.full-text-input-wrap {
+		display: flex;
+		gap: 8px;
+		width: 100%;
+	}
+
+	.meaning-input {
+		flex: 1;
+		background: var(--bg);
+		border: 1px solid var(--border-strong);
+		color: var(--text-primary);
+		font-family: var(--font-sans);
+		font-size: 1rem;
+		padding: 12px;
+		outline: none;
+	}
+
+	.meaning-input:focus {
+		border-color: var(--cyan);
+	}
+
+	.meaning-input.correct {
+		border-color: var(--green);
+		color: var(--green);
+	}
+
+	.meaning-input.wrong {
+		border-color: var(--red);
+		color: var(--red);
+	}
+
+	.submit-btn {
+		background: var(--bg-hover);
+		border: 1px solid var(--border-strong);
+		color: var(--text-primary);
 		font-family: var(--font-mono);
-		font-size: 1.15rem;
-		font-weight: 800;
+		font-weight: 700;
+		font-size: 0.8rem;
+		padding: 0 16px;
 		cursor: pointer;
-		transition: transform 0.2s var(--ease-bounce), background 0.2s, border-color 0.2s;
 	}
 
-	.tap-chip:hover:not(:disabled) {
-		transform: scale(1.03);
-		background: rgba(0, 242, 254, 0.12);
-		border-color: var(--primary-cyan);
-	}
-
-	.tap-chip:active:not(:disabled) {
-		transform: scale(0.96);
-	}
-
-	.tap-chip.correct-chip {
-		background: rgba(0, 230, 118, 0.2);
-		border-color: var(--success-green);
-		color: var(--success-green);
-	}
-
-	.tap-chip.wrong-chip {
-		background: rgba(255, 61, 0, 0.2);
-		border-color: var(--error-red);
-		color: var(--error-red);
+	.submit-btn:hover:not(:disabled) {
+		background: var(--cyan);
+		color: #000;
 	}
 
 	.card-footer {
 		display: flex;
 		flex-direction: column;
-		align-items: center;
+		min-height: 96px;
 	}
 
 	.hint-btn {
 		background: transparent;
 		border: none;
-		color: var(--text-secondary);
-		font-size: 0.85rem;
-		font-weight: 600;
-		display: flex;
-		align-items: center;
-		gap: 6px;
+		color: var(--text-muted);
+		font-size: 0.8rem;
+		font-family: var(--font-mono);
 		cursor: pointer;
-		padding: 8px 14px;
-		border-radius: 12px;
-		transition: color 0.2s, background 0.2s;
+		padding: 0;
+		text-align: center;
 	}
 
 	.hint-btn:hover:not(:disabled) {
-		color: #ffd700;
-		background: rgba(255, 215, 0, 0.08);
+		color: var(--text-primary);
 	}
 
 	.hint-btn:disabled {
-		opacity: 0.4;
-		cursor: not-allowed;
+		opacity: 0.5;
+		cursor: default;
 	}
 
 	.result-banner {
-		width: 100%;
+		background: transparent;
+		border-top: 1px solid var(--border);
+		padding: 16px 0 0;
 		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		padding: 12px 16px;
-		border-radius: 16px;
-		gap: 12px;
-	}
-
-	.result-success {
-		background: rgba(0, 230, 118, 0.12);
-		border: 1px solid rgba(0, 230, 118, 0.3);
-	}
-
-	.result-failure {
-		background: rgba(255, 61, 0, 0.12);
-		border: 1px solid rgba(255, 61, 0, 0.3);
+		flex-direction: column;
+		gap: 16px;
+		width: 100%;
 	}
 
 	.result-text {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		font-size: 0.9rem;
+		font-family: var(--font-mono);
+		font-size: 0.95rem;
+		font-weight: 700;
+		line-height: 1.4;
+		white-space: normal;
+		word-break: break-word;
 	}
 
-	.answer-reveal {
-		font-family: var(--font-mono);
-		font-weight: 800;
-		font-size: 1.1rem;
-		display: block;
-		color: #ffffff;
+	.text-correct {
+		color: var(--green);
+	}
+
+	.text-wrong {
+		color: var(--red);
 	}
 
 	.next-btn {
-		padding: 10px 18px;
+		background: var(--yellow);
+		color: #1a1a1a;
+		border: none;
+		padding: 12px 24px;
+		font-weight: 800;
 		font-size: 0.9rem;
+		font-family: var(--font-mono);
+		cursor: pointer;
+		border-radius: 0;
+		letter-spacing: 0.05em;
+		align-self: flex-end;
+		white-space: nowrap;
 	}
 </style>

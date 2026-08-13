@@ -6,7 +6,6 @@
 	import AcronymListSheet from '$lib/components/AcronymListSheet.svelte';
 	import { ACRONYMS } from '$lib/data/acronyms';
 	import { playStreakBonusSound } from '$lib/audio';
-	import { RotateCcw, Award } from 'lucide-svelte';
 
 	let currentItemIndex = $state(0);
 	let score = $state(0);
@@ -67,7 +66,7 @@
 			correctAnswered += 1;
 			streak += 1;
 			if (streak > maxStreak) maxStreak = streak;
-			
+
 			const earned = Math.round(points * multiplier);
 			score += earned;
 
@@ -93,15 +92,13 @@
 </script>
 
 <svelte:head>
-	<title>PhilNITS Acronym Blitz - Gamified Learning</title>
-	<meta name="description" content="Master all 118 PhilNITS acronyms instantly with high-dopamine fill-in-the-blank speed runs and edge leaderboards!" />
+	<title>PhilNITS Acronym Blitz</title>
 </svelte:head>
 
 <main class="app-main">
 	<Navbar
 		{score}
 		{streak}
-		{multiplier}
 		openLeaderboard={() => (showLeaderboard = true)}
 		openDictionary={() => (showDictionary = true)}
 	/>
@@ -117,16 +114,9 @@
 		{/if}
 
 		<div class="session-bar">
-			<div class="session-stat">
-				<Award size={16} color="#00f2fe" />
-				<span>Mastered: <strong>{masteredIds.size} / {ACRONYMS.length}</strong></span>
-			</div>
-			<div class="session-stat">
-				<span>Accuracy: <strong>{Math.round(accuracy)}%</strong></span>
-			</div>
-			<button class="reset-btn" onclick={resetSession} title="Reset Game Score">
-				<RotateCcw size={14} /> Reset
-			</button>
+			<span>Mastered: {masteredIds.size}/{ACRONYMS.length}</span>
+			<span>Acc: {Math.round(accuracy)}%</span>
+			<button class="reset-btn" onclick={resetSession}>reset</button>
 		</div>
 	</section>
 
@@ -147,13 +137,10 @@
 
 <style>
 	.app-main {
-		width: 100vw;
-		height: 100vh;
-		height: 100dvh;
 		display: flex;
 		flex-direction: column;
+		height: 100%;
 		overflow: hidden;
-		position: relative;
 	}
 
 	.game-area {
@@ -162,54 +149,36 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		padding: 12px 16px 20px;
-		max-width: 600px;
+		padding: 24px 20px;
+		max-width: 640px;
 		margin: 0 auto;
 		width: 100%;
-		gap: 16px;
+		gap: 20px;
 	}
 
 	.session-bar {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		width: 100%;
-		max-width: 500px;
-		padding: 10px 16px;
-		background: rgba(255, 255, 255, 0.03);
-		border: 1px solid var(--border-light);
-		border-radius: 16px;
-		font-size: 0.8rem;
+		justify-content: center;
+		font-size: 0.85rem;
+		font-family: var(--font-mono);
 		color: var(--text-secondary);
-	}
-
-	.session-stat {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-	}
-
-	.session-stat strong {
-		color: #ffffff;
+		padding: 8px 0;
+		gap: 28px;
+		width: 100%;
 	}
 
 	.reset-btn {
 		background: transparent;
 		border: none;
-		color: var(--text-muted);
+		color: var(--text-secondary);
 		font-size: 0.75rem;
-		font-weight: 600;
-		display: flex;
-		align-items: center;
-		gap: 4px;
 		cursor: pointer;
-		padding: 4px 8px;
-		border-radius: 8px;
-		transition: color 0.2s, background 0.2s;
+		padding: 0;
+		font-family: var(--font-sans);
 	}
 
 	.reset-btn:hover {
-		color: var(--error-red);
-		background: rgba(255, 61, 0, 0.1);
+		color: var(--red);
 	}
 </style>
