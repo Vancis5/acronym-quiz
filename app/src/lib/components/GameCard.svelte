@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { type AcronymItem } from '$lib/data/acronyms';
 	import { playPopSound, playCorrectSound, playCloseSound, playAlmostSound, playWrongSound } from '$lib/audio';
-	import { evaluateAnswer, type GradeStatus } from '$lib/grader';
+	import { evaluateAnswer, getCoreMeaning, type GradeStatus } from '$lib/grader';
 	import { Lightbulb, Check, X, Sparkles, Minus } from 'lucide-svelte';
 
 	let {
@@ -24,7 +24,8 @@
 
 	let cleanAcronym = $derived(item.acronym.trim());
 	let cleanMeaning = $derived(item.meaning.trim());
-	let wordsInMeaning = $derived(cleanMeaning.split(/\s+/));
+	let coreMeaning = $derived(getCoreMeaning(cleanMeaning));
+	let wordsInMeaning = $derived(coreMeaning.split(/\s+/).filter((w) => w.length > 0));
 
 	$effect(() => {
 		if (item) {
@@ -102,7 +103,7 @@
 		<div class="acronym-hero-text">{item.acronym}</div>
 	</div>
 
-	<!-- Info zone: always takes up same space, content swaps -->
+	<!-- Info zone: always takes up same space, shows result or description -->
 	<div class="info-zone">
 		{#if isSubmitted && resultStatus}
 			<div class="info-log animate-pop-in log-{resultStatus}">
@@ -122,15 +123,6 @@
 					{/if}
 				</span>
 				<span class="log-answer">{cleanMeaning}</span>
-			</div>
-		{:else if hintLevel > 0}
-			<div class="info-log log-hint animate-pop-in">
-				<Lightbulb size={12} />
-				{#if hintLevel === 1}
-					{wordsInMeaning.length} words · {cleanMeaning.length} chars
-				{:else}
-					Initials: {wordsInMeaning.map((w) => w[0]?.toUpperCase() || '').join(' ')}
-				{/if}
 			</div>
 		{:else if item.hint}
 			<div class="info-log log-desc">
@@ -161,7 +153,7 @@
 		{/if}
 	</div>
 
-	<!-- Footer: hint button, always same height -->
+	<!-- Footer: hint button + inline hint on the same line -->
 	<div class="card-footer">
 		<button
 			class="hint-btn"
@@ -171,6 +163,16 @@
 		>
 			{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}
 		</button>
+		{#if hintLevel > 0 && !isSubmitted}
+			<div class="hint-inline animate-pop-in">
+				<Lightbulb size={12} />
+				{#if hintLevel === 1}
+					<span>{wordsInMeaning.length} words · {coreMeaning.length} chars</span>
+				{:else}
+					<span>Initials: {wordsInMeaning.map((w) => w[0]?.toUpperCase() || '').join(' ')}</span>
+				{/if}
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -260,13 +262,6 @@
 
 	.log-wrong {
 		color: var(--red);
-	}
-
-	.log-hint {
-		color: var(--yellow-text);
-		flex-direction: row;
-		align-items: center;
-		gap: 6px;
 	}
 
 	.log-desc {
@@ -376,9 +371,12 @@
 		filter: brightness(1.1);
 	}
 
-	/* Footer: hint button, always same height */
+	/* Footer: hint button + inline hint on the same line */
 	.card-footer {
 		display: flex;
+		align-items: center;
+		gap: 12px;
+		min-height: 24px;
 	}
 
 	.hint-btn {
@@ -393,6 +391,7 @@
 		margin: -2px -6px;
 		text-align: left;
 		transition: color 0.15s ease;
+		flex-shrink: 0;
 	}
 
 	.hint-btn:hover:not(:disabled) {
@@ -402,5 +401,15 @@
 	.hint-btn:disabled {
 		opacity: 0.5;
 		cursor: default;
+	}
+
+	.hint-inline {
+		display: inline-flex;
+		align-items: center;
+		gap: 6px;
+		font-family: var(--font-sans);
+		font-size: 0.8rem;
+		color: var(--yellow-text);
+		font-weight: 500;
 	}
 </style>

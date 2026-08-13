@@ -4171,6 +4171,14 @@ function attr_class(value, hash, directives) {
 	return result ? ` class="${escape_html(result, true)}"` : "";
 }
 /**
+* @param {any} value
+* @param {Record<string,any>|[Record<string,any>,Record<string,any>]} [directives]
+*/
+function attr_style(value, directives) {
+	var result = to_style(value, directives);
+	return result ? ` style="${escape_html(result, true)}"` : "";
+}
+/**
 * @param {Renderer} renderer
 * @param {Record<string, any>} $$props
 * @param {string} name
@@ -4379,4 +4387,4 @@ function fork() {
 async function tick() {}
 async function settled() {}
 //#endregion
-export { STATE_SYMBOL as $, clear_text_content as A, pop$1 as B, writable as C, set_active_effect as D, get as E, mutable_source as F, set_hydrate_node as G, async_mode_flag as H, set as I, lifecycle_double_unmount as J, set_hydrating as K, flushSync as L, get_first_child as M, get_next_sibling as N, set_active_reaction as O, init_operations as P, LEGACY_PROPS as Q, boundary as R, readable as S, active_reaction as T, hydrate_node as U, push$1 as V, hydrating as W, HYDRATION_ERROR as X, state_proxy_unmount as Y, hydration_failed as Z, setContext as _, bind_props as a, escape_html as b, ensure_array_like as c, rest_props as d, array_from as et, sanitize_props as f, getContext as g, stringify as h, attributes as i, run as it, create_text as j, component_root as k, head as l, spread_props as m, tick as n, fallback as nt, derived as o, slot as p, hydration_mismatch as q, attr_class as r, noop as rt, element as s, index_server_exports as t, define_property as tt, render as u, attr as v, active_effect as w, is_passive_event as x, clsx$1 as y, component_context as z };
+export { LEGACY_PROPS as $, component_root as A, component_context as B, readable as C, get as D, active_reaction as E, init_operations as F, hydrating as G, push$1 as H, mutable_source as I, hydration_mismatch as J, set_hydrate_node as K, set as L, create_text as M, get_first_child as N, set_active_effect as O, get_next_sibling as P, hydration_failed as Q, flushSync as R, is_passive_event as S, active_effect as T, async_mode_flag as U, pop$1 as V, hydrate_node as W, state_proxy_unmount as X, lifecycle_double_unmount as Y, HYDRATION_ERROR as Z, getContext as _, attributes as a, run as at, clsx$1 as b, element as c, render as d, STATE_SYMBOL as et, rest_props as f, stringify as g, spread_props as h, attr_style as i, noop as it, clear_text_content as j, set_active_reaction as k, ensure_array_like as l, slot as m, tick as n, define_property as nt, bind_props as o, sanitize_props as p, set_hydrating as q, attr_class as r, fallback as rt, derived as s, index_server_exports as t, array_from as tt, head as u, setContext as v, writable as w, escape_html as x, attr as y, boundary as z };

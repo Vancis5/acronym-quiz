@@ -138,21 +138,50 @@ function evaluateSingleTarget(input: string, target: string): { similarity: numb
 	return { similarity: overallSim, status: 'wrong' };
 }
 
+export function getCoreMeaning(fullMeaning: string): string {
+	return fullMeaning.replace(/\s*\([^)]*\)/g, '').trim();
+}
+
+export function getCandidateMeanings(fullMeaning: string): string[] {
+	const candidates = new Set<string>();
+
+	const clean = fullMeaning.trim();
+	const withoutParens = getCoreMeaning(clean);
+
+	if (withoutParens) {
+		candidates.add(withoutParens);
+	}
+	if (clean) {
+		candidates.add(clean);
+	}
+
+	// Expand whole-phrase slashes / semicolons (e.g. "Application Service Provider / Active Server Pages")
+	const slashPhrases = withoutParens.split(/\s+[/;]\s+/);
+	if (slashPhrases.length > 1) {
+		for (const p of slashPhrases) {
+			const trimmed = p.trim();
+			if (trimmed) candidates.add(trimmed);
+		}
+	}
+
+	// Expand in-word slashes (e.g. "Independent/Inexpensive" or "Reader/Recognition")
+	if (withoutParens.includes('/')) {
+		const optionA = withoutParens.replace(/(\w+)\/(\w+)/g, '$1').trim();
+		const optionB = withoutParens.replace(/(\w+)\/(\w+)/g, '$2').trim();
+		if (optionA) candidates.add(optionA);
+		if (optionB) candidates.add(optionB);
+	}
+
+	return Array.from(candidates);
+}
+
 export function evaluateAnswer(input: string, fullMeaning: string): EvaluationResult {
 	const trimmedInput = input.trim();
 	if (!trimmedInput) {
 		return { status: 'wrong', label: 'WRONG', similarity: 0, earnedRatio: 0 };
 	}
 
-	// Split by / or ; if multiple valid options exist
-	const candidates = fullMeaning
-		.split(/[/;]/)
-		.map((s) => s.trim())
-		.filter((s) => s.length > 0);
-
-	if (candidates.length > 1) {
-		candidates.push(fullMeaning.trim());
-	}
+	const candidates = getCandidateMeanings(fullMeaning);
 
 	let bestResult: { similarity: number; status: GradeStatus } = { similarity: -1, status: 'wrong' };
 

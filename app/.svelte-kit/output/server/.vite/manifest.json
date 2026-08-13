@@ -95,7 +95,7 @@
       "_index-server.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Blpff3bn.css"
+      "_app/immutable/assets/_layout.LGFgzJYO.css"
     ]
   },
   "src/routes/+page.svelte": {
@@ -107,7 +107,7 @@
       "_index-server.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.Bo0dmrTO.css"
+      "_app/immutable/assets/_page.DkhQw6z4.css"
     ]
   },
   "src/routes/api/leaderboard/+server.ts": {

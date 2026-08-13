@@ -88,7 +88,25 @@
 </script>
 
 <header class="navbar-header">
-	<div class="brand">PhilNITS</div>
+	<div class="nav-section nav-left">
+		<span class="brand">philnits acronym quiz</span>
+		<div class="mobile-actions">
+			<button class="icon-btn" onclick={toggleTheme} aria-label="Toggle Theme">
+				{#if isLight}
+					<Moon size={18} />
+				{:else}
+					<Sun size={18} />
+				{/if}
+			</button>
+			<button class="icon-btn" onclick={toggleAudio} aria-label="Toggle Sound">
+				{#if soundOn}
+					<Volume2 size={18} />
+				{:else}
+					<VolumeX size={18} />
+				{/if}
+			</button>
+		</div>
+	</div>
 
 	<div class="stats-center">
 		<span class="score-text">{displayScore}</span>
@@ -97,26 +115,28 @@
 		{/if}
 	</div>
 
-	<div class="actions-group">
-		<button class="icon-btn" onclick={toggleTheme} aria-label="Toggle Theme">
-			{#if isLight}
-				<Moon size={22} />
-			{:else}
-				<Sun size={22} />
-			{/if}
-		</button>
-		<button class="icon-btn" onclick={toggleAudio} aria-label="Toggle Sound">
-			{#if soundOn}
-				<Volume2 size={22} />
-			{:else}
-				<VolumeX size={22} />
-			{/if}
-		</button>
+	<div class="nav-section nav-right">
+		<div class="desktop-actions">
+			<button class="icon-btn" onclick={toggleTheme} aria-label="Toggle Theme">
+				{#if isLight}
+					<Moon size={18} />
+				{:else}
+					<Sun size={18} />
+				{/if}
+			</button>
+			<button class="icon-btn" onclick={toggleAudio} aria-label="Toggle Sound">
+				{#if soundOn}
+					<Volume2 size={18} />
+				{:else}
+					<VolumeX size={18} />
+				{/if}
+			</button>
+		</div>
 		<button class="icon-btn" onclick={openDictionary} aria-label="Open Dictionary">
-			<BookOpen size={22} />
+			<BookOpen size={18} />
 		</button>
 		<button class="icon-btn" onclick={openLeaderboard} aria-label="Open Leaderboard">
-			<Trophy size={22} />
+			<Trophy size={18} />
 		</button>
 	</div>
 </header>
@@ -126,30 +146,58 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		height: 64px;
+		height: 48px;
 		border-bottom: 1px solid var(--border);
-		padding: 0 24px;
+		padding: 0 20px;
 		width: 100%;
+	}
+
+	.nav-section {
+		display: flex;
+		align-items: center;
+		flex: 1;
+	}
+
+	.nav-left {
+		justify-content: flex-start;
+	}
+
+	.nav-right {
+		justify-content: flex-end;
+		gap: 12px;
 	}
 
 	.brand {
 		font-family: var(--font-mono);
-		font-size: 1.15rem;
-		font-weight: 800;
-		letter-spacing: 0.05em;
+		font-size: 0.88rem;
+		font-weight: 700;
+		letter-spacing: 0.02em;
 		color: var(--text-primary);
-		flex: 1;
+		display: block;
+	}
+
+	.mobile-actions {
+		display: none;
+		align-items: center;
+		gap: 8px;
+	}
+
+	.desktop-actions {
+		display: flex;
+		align-items: center;
+		gap: 12px;
 	}
 
 	.stats-center {
 		display: flex;
 		align-items: center;
-		gap: 20px;
+		justify-content: center;
+		gap: 10px;
 		font-family: var(--font-mono);
-		font-size: 1.05rem;
+		font-size: 0.95rem;
 		font-weight: 700;
 		flex: 1;
-		justify-content: center;
+		text-align: center;
 	}
 
 	.score-text {
@@ -160,14 +208,7 @@
 	.streak-text {
 		color: var(--cyan);
 		font-variant-numeric: tabular-nums;
-	}
-
-	.actions-group {
-		display: flex;
-		align-items: center;
-		gap: 20px;
-		flex: 1;
-		justify-content: flex-end;
+		font-size: 0.85rem;
 	}
 
 	.icon-btn {
@@ -178,8 +219,8 @@
 		align-items: center;
 		justify-content: center;
 		cursor: pointer;
-		padding: 6px;
-		border-radius: var(--radius-md);
+		padding: 5px;
+		border-radius: var(--radius-sm);
 		transition: background-color 0.15s ease, color 0.15s ease;
 	}
 
@@ -188,9 +229,39 @@
 		color: var(--yellow-text);
 	}
 
-	@media (max-width: 480px) {
-		.stats-center {
+	@media (max-width: 640px) {
+		.navbar-header {
+			height: 52px;
+			padding: 0 16px;
+		}
+
+		.brand {
 			display: none;
+		}
+
+		.mobile-actions {
+			display: flex;
+		}
+
+		.desktop-actions {
+			display: none;
+		}
+
+		.nav-right {
+			gap: 8px;
+		}
+
+		.stats-center {
+			font-size: 1.05rem;
+			gap: 8px;
+		}
+
+		.streak-text {
+			font-size: 0.9rem;
+		}
+
+		.icon-btn {
+			padding: 6px;
 		}
 	}
 </style>
