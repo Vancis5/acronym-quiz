@@ -8,8 +8,8 @@
   --border: rgba(255,255,255,0.1);
   --border-strong: rgba(255,255,255,0.18);
   --text-primary: #f0f0f0;
-  --text-secondary: rgba(240,240,240,0.5);
-  --text-muted: rgba(240,240,240,0.3);
+  --text-secondary: rgba(240,240,240,0.75);
+  --text-muted: rgba(240,240,240,0.4);
   --yellow: #f5c800;
   --cyan: #00c8c8;
   --red: #d94040;
@@ -27,8 +27,8 @@
   --border: rgba(0,0,0,0.1);
   --border-strong: rgba(0,0,0,0.2);
   --text-primary: #1a1a1a;
-  --text-secondary: rgba(26,26,26,0.5);
-  --text-muted: rgba(26,26,26,0.35);
+  --text-secondary: rgba(26,26,26,0.75);
+  --text-muted: rgba(26,26,26,0.45);
   --yellow: #a07a00;
   --cyan: #007070;
   --red: #c42a2a;
@@ -50,6 +50,22 @@ html, body {
   color: var(--text-primary);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Theme fade transition */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.25s;
+  animation-timing-function: ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
 }
 
 /* Animations */

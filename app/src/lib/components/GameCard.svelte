@@ -206,13 +206,13 @@
 		display: flex;
 		align-items: flex-start;
 		margin-bottom: 20px;
-		border-left: 2px solid var(--border);
-		padding-left: 12px;
+		border-left: 2px solid var(--border-strong);
+		padding-left: 14px;
 	}
 
 	.info-log {
 		font-family: var(--font-mono);
-		font-size: 0.8rem;
+		font-size: 0.85rem;
 		line-height: 1.5;
 		display: flex;
 		flex-direction: column;
@@ -236,8 +236,8 @@
 	}
 
 	.log-desc {
-		color: var(--text-muted);
-		font-style: italic;
+		color: var(--text-secondary);
+		font-style: normal;
 	}
 
 	.log-prefix {

@@ -28,14 +28,25 @@
 	}
 
 	function toggleTheme() {
-		isLight = !isLight;
-		if (isLight) {
-			document.documentElement.classList.add('light');
-			localStorage.setItem('philnits_theme', 'light');
-		} else {
-			document.documentElement.classList.remove('light');
-			localStorage.setItem('philnits_theme', 'dark');
+		const applyTheme = () => {
+			isLight = !isLight;
+			if (isLight) {
+				document.documentElement.classList.add('light');
+				localStorage.setItem('philnits_theme', 'light');
+			} else {
+				document.documentElement.classList.remove('light');
+				localStorage.setItem('philnits_theme', 'dark');
+			}
+		};
+
+		if (!document.startViewTransition) {
+			applyTheme();
+			return;
 		}
+
+		document.startViewTransition(() => {
+			applyTheme();
+		});
 	}
 </script>
 
