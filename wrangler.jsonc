@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "acronym-quiz",
+	"compatibility_date": "2026-08-13",
+	"compatibility_flags": [
+		"nodejs_als"
+	],
+	"pages_build_output_dir": ".svelte-kit/cloudflare",
+	"d1_databases": [
+		{
+			"binding": "DB",
+			"database_name": "acronym_leaderboard",
+			"database_id": "local-acronym-quiz-d1"
+		}
+	]
+}
