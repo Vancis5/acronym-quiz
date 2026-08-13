@@ -48,7 +48,10 @@
 	}
 
 	function handleKeyDown(e: KeyboardEvent) {
-		if (e.key === 'Enter') checkAnswer();
+		if (e.key === 'Enter') {
+			if (isSubmitted) handleNext();
+			else checkAnswer();
+		}
 	}
 
 	function evaluateResult(correct: boolean) {
@@ -89,60 +92,61 @@
 		<div class="acronym-hero-text">{item.acronym}</div>
 	</div>
 
-	{#if hintLevel > 0}
-		<div class="hint-banner animate-pop-in">
-			<Lightbulb size={12} />
-			{#if hintLevel === 1}
-				{wordsInMeaning.length} words ({cleanMeaning.length} chars)
-			{:else}
-				Initials: {wordsInMeaning.map((w) => w[0]?.toUpperCase() || '').join(' ')}
-			{/if}
-		</div>
-	{/if}
-
-	<div class="input-section">
-		<div class="full-text-input-wrap">
-			<input
-				id="meaning-text-input"
-				type="text"
-				class="meaning-input {isSubmitted ? (isCorrect ? 'correct' : 'wrong') : ''}"
-				placeholder="Type what {cleanAcronym} stands for..."
-				bind:value={inputValue}
-				disabled={isSubmitted}
-				onkeydown={handleKeyDown}
-				autocomplete="off"
-				autocorrect="off"
-			/>
-			<button
-				class="submit-btn"
-				onclick={checkAnswer}
-				disabled={isSubmitted || !inputValue.trim()}
-				style:opacity={isSubmitted ? '0' : '1'}
-				style:pointer-events={isSubmitted ? 'none' : 'auto'}
-			>
-				SUBMIT
-			</button>
-		</div>
-	</div>
-
-	<div class="card-footer">
-		{#if !isSubmitted}
-			<button class="hint-btn" onclick={triggerHint} disabled={hintLevel >= 2}>
-				{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}
-			</button>
-			<div class="next-btn-placeholder"></div>
-		{:else}
-			<div class="result-banner animate-pop-in">
-				<div class="result-text {isCorrect ? 'text-correct' : 'text-wrong'}">
-					{#if isCorrect}
-						CORRECT — {item.meaning}
-					{:else}
-						ANSWER: {item.meaning}
-					{/if}
-				</div>
-				<button class="next-btn" onclick={handleNext}>NEXT ➔</button>
+	<!-- Info zone: always takes up same space, content swaps -->
+	<div class="info-zone">
+		{#if isSubmitted}
+			<div class="info-log animate-pop-in {isCorrect ? 'log-correct' : 'log-wrong'}">
+				<span class="log-prefix">{isCorrect ? '✓ CORRECT' : '✗ WRONG'}</span>
+				<span class="log-answer">{cleanMeaning}</span>
+			</div>
+		{:else if hintLevel > 0}
+			<div class="info-log log-hint animate-pop-in">
+				<Lightbulb size={12} />
+				{#if hintLevel === 1}
+					{wordsInMeaning.length} words · {cleanMeaning.length} chars
+				{:else}
+					Initials: {wordsInMeaning.map((w) => w[0]?.toUpperCase() || '').join(' ')}
+				{/if}
+			</div>
+		{:else if item.hint}
+			<div class="info-log log-desc">
+				{item.hint}
 			</div>
 		{/if}
+	</div>
+
+	<!-- Action row: input + button always at same position -->
+	<div class="action-row">
+		<input
+			id="meaning-text-input"
+			type="text"
+			class="meaning-input {isSubmitted ? (isCorrect ? 'correct' : 'wrong') : ''}"
+			placeholder="What does {cleanAcronym} stand for?"
+			bind:value={inputValue}
+			disabled={isSubmitted}
+			onkeydown={handleKeyDown}
+			autocomplete="off"
+			autocorrect="off"
+		/>
+		{#if isSubmitted}
+			<button class="action-btn next-btn" onclick={handleNext}>NEXT ➔</button>
+		{:else}
+			<button class="action-btn submit-btn" onclick={checkAnswer} disabled={!inputValue.trim()}>
+				SUBMIT
+			</button>
+		{/if}
+	</div>
+
+	<!-- Footer: hint button, always same height -->
+	<div class="card-footer">
+		<button
+			class="hint-btn"
+			onclick={triggerHint}
+			disabled={isSubmitted || hintLevel >= 2}
+			style:visibility={isSubmitted ? 'hidden' : 'visible'}
+		>
+			{hintLevel === 0 ? 'hint' : hintLevel === 1 ? 'more hint' : 'no more hints'}
+		</button>
 	</div>
 </div>
 
@@ -152,17 +156,16 @@
 		background: var(--bg-card);
 		border: 1px solid var(--border-strong);
 		border-radius: 0;
-		padding: 32px 28px;
-		min-height: 380px;
+		padding: 28px 28px 24px;
 		display: flex;
 		flex-direction: column;
-		justify-content: space-between;
-		gap: 24px;
+		gap: 0;
 	}
 
 	.card-header {
 		display: flex;
 		align-items: center;
+		margin-bottom: 20px;
 	}
 
 	.category-tag {
@@ -177,6 +180,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 6px;
+		margin-bottom: 20px;
 	}
 
 	.prompt-label {
@@ -196,25 +200,63 @@
 		line-height: 1.1;
 	}
 
-	.hint-banner {
-		color: var(--yellow);
-		font-size: 0.8rem;
-		font-family: var(--font-mono);
+	/* Fixed-height info zone — always takes up same space */
+	.info-zone {
+		min-height: 72px;
 		display: flex;
+		align-items: flex-start;
+		margin-bottom: 20px;
+		border-left: 2px solid var(--border);
+		padding-left: 12px;
+	}
+
+	.info-log {
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		line-height: 1.5;
+		display: flex;
+		flex-direction: column;
+		gap: 4px;
+		word-break: break-word;
+	}
+
+	.log-correct {
+		color: var(--green);
+	}
+
+	.log-wrong {
+		color: var(--red);
+	}
+
+	.log-hint {
+		color: var(--yellow);
+		flex-direction: row;
 		align-items: center;
 		gap: 6px;
 	}
 
-	.input-section {
-		display: flex;
-		justify-content: center;
-		width: 100%;
+	.log-desc {
+		color: var(--text-muted);
+		font-style: italic;
 	}
 
-	.full-text-input-wrap {
+	.log-prefix {
+		font-weight: 700;
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+	}
+
+	.log-answer {
+		font-size: 0.9rem;
+		font-weight: 600;
+	}
+
+	/* Action row: input + button, always same structure */
+	.action-row {
 		display: flex;
 		gap: 8px;
 		width: 100%;
+		margin-bottom: 16px;
 	}
 
 	.meaning-input {
@@ -226,6 +268,7 @@
 		font-size: 1rem;
 		padding: 12px;
 		outline: none;
+		min-width: 0;
 	}
 
 	.meaning-input:focus {
@@ -242,15 +285,25 @@
 		color: var(--red);
 	}
 
-	.submit-btn {
-		background: var(--bg-hover);
-		border: 1px solid var(--border-strong);
-		color: var(--text-primary);
+	/* Shared base for submit + next — same size, same position */
+	.action-btn {
+		flex-shrink: 0;
 		font-family: var(--font-mono);
 		font-weight: 700;
 		font-size: 0.8rem;
-		padding: 0 16px;
+		padding: 0 20px;
 		cursor: pointer;
+		border-radius: 0;
+		letter-spacing: 0.05em;
+		white-space: nowrap;
+		height: auto;
+		border: 1px solid transparent;
+	}
+
+	.submit-btn {
+		background: var(--bg-hover);
+		border-color: var(--border-strong);
+		color: var(--text-primary);
 	}
 
 	.submit-btn:hover:not(:disabled) {
@@ -258,10 +311,24 @@
 		color: #000;
 	}
 
+	.submit-btn:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+
+	.next-btn {
+		background: var(--yellow);
+		color: #1a1a1a;
+		border-color: transparent;
+	}
+
+	.next-btn:hover {
+		filter: brightness(1.1);
+	}
+
+	/* Footer: hint button, always same height */
 	.card-footer {
 		display: flex;
-		flex-direction: column;
-		min-height: 96px;
 	}
 
 	.hint-btn {
@@ -272,7 +339,7 @@
 		font-family: var(--font-mono);
 		cursor: pointer;
 		padding: 0;
-		text-align: center;
+		text-align: left;
 	}
 
 	.hint-btn:hover:not(:disabled) {
@@ -282,47 +349,5 @@
 	.hint-btn:disabled {
 		opacity: 0.5;
 		cursor: default;
-	}
-
-	.result-banner {
-		background: transparent;
-		border-top: 1px solid var(--border);
-		padding: 16px 0 0;
-		display: flex;
-		flex-direction: column;
-		gap: 16px;
-		width: 100%;
-	}
-
-	.result-text {
-		font-family: var(--font-mono);
-		font-size: 0.95rem;
-		font-weight: 700;
-		line-height: 1.4;
-		white-space: normal;
-		word-break: break-word;
-	}
-
-	.text-correct {
-		color: var(--green);
-	}
-
-	.text-wrong {
-		color: var(--red);
-	}
-
-	.next-btn {
-		background: var(--yellow);
-		color: #1a1a1a;
-		border: none;
-		padding: 12px 24px;
-		font-weight: 800;
-		font-size: 0.9rem;
-		font-family: var(--font-mono);
-		cursor: pointer;
-		border-radius: 0;
-		letter-spacing: 0.05em;
-		align-self: flex-end;
-		white-space: nowrap;
 	}
 </style>
