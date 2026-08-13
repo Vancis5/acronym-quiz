@@ -212,33 +212,66 @@
 	/* Top 3 metallic accents - Dark */
 	.rank-gold .rank-pos,
 	.rank-gold .score-val {
-		color: #f3c343;
+		color: #f5c747;
+		background: linear-gradient(135deg, #fff6bd 0%, #f5c747 42%, #c28b1e 85%, #e5b232 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-weight: 800;
+		filter: drop-shadow(0 0 6px rgba(245, 199, 71, 0.3));
 	}
 
 	.rank-silver .rank-pos,
 	.rank-silver .score-val {
-		color: #d4d4d8;
+		color: #e2e8f0;
+		background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 42%, #94a3b8 85%, #cbd5e1 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-weight: 800;
+		filter: drop-shadow(0 0 6px rgba(226, 232, 240, 0.25));
 	}
 
 	.rank-bronze .rank-pos,
 	.rank-bronze .score-val {
-		color: #e89758;
+		color: #e89558;
+		background: linear-gradient(135deg, #ffd6ba 0%, #e89558 42%, #a8501c 85%, #d4793b 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-weight: 800;
+		filter: drop-shadow(0 0 6px rgba(232, 149, 88, 0.25));
 	}
 
 	/* Top 3 metallic accents - Light */
 	:global(:root.light) .rank-gold .rank-pos,
 	:global(:root.light) .rank-gold .score-val {
-		color: #966c00;
+		color: #7d5200;
+		background: linear-gradient(135deg, #a87300 0%, #7d5200 45%, #543700 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: none;
 	}
 
 	:global(:root.light) .rank-silver .rank-pos,
 	:global(:root.light) .rank-silver .score-val {
-		color: #52525b;
+		color: #334155;
+		background: linear-gradient(135deg, #5a6a7d 0%, #3d4a59 45%, #222b35 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: none;
 	}
 
 	:global(:root.light) .rank-bronze .rank-pos,
 	:global(:root.light) .rank-bronze .score-val {
-		color: #9c4915;
+		color: #783206;
+		background: linear-gradient(135deg, #a34812 0%, #783206 45%, #522000 100%);
+		background-clip: text;
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		filter: none;
 	}
 
 	.rank-info {
