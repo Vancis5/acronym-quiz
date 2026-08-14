@@ -52,7 +52,6 @@ export function playCorrectSound(streak = 1) {
 	if (!context) return;
 
 	const now = context.currentTime;
-	const baseFreq = 523.25; // C5
 	const freqs = streak > 3 ? [523.25, 659.25, 783.99, 1046.5] : [523.25, 659.25, 783.99];
 
 	freqs.forEach((freq, i) => {

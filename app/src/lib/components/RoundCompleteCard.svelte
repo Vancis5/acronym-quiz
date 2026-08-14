@@ -52,7 +52,7 @@
 	<div class="stats-zone">
 		<div class="stat-box">
 			<span class="stat-value">{roundCorrect}/{roundTotal}</span>
-			<span class="stat-label">score</span>
+			<span class="stat-label">correct</span>
 		</div>
 		<div class="stat-divider"></div>
 		<div class="stat-box">
