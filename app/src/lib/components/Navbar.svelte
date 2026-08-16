@@ -106,56 +106,58 @@
 </script>
 
 <header class="navbar-header">
-	<div class="nav-section nav-left">
-		<span class="brand">philnits acronym quiz</span>
-		<div class="mobile-actions">
-			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
-				{#if isLight}
-					<Moon size={18} />
-				{:else}
-					<Sun size={18} />
-				{/if}
+	<div class="navbar-content">
+		<div class="nav-section nav-left">
+			<span class="brand">philnits acronym quiz</span>
+			<div class="mobile-actions">
+				<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
+					{#if isLight}
+						<Moon size={18} />
+					{:else}
+						<Sun size={18} />
+					{/if}
+				</button>
+				<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
+					{#if soundOn}
+						<Volume2 size={18} />
+					{:else}
+						<VolumeX size={18} />
+					{/if}
+				</button>
+			</div>
+		</div>
+
+		<div class="stats-center">
+			<span class="score-text {isDeducting ? 'deducting' : ''}">{displayScore}</span>
+			{#if streak > 0}
+				<span class="streak-text animate-streak-pulse">×{streak}</span>
+			{/if}
+		</div>
+
+		<div class="nav-section nav-right">
+			<div class="desktop-actions">
+				<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
+					{#if isLight}
+						<Moon size={18} />
+					{:else}
+						<Sun size={18} />
+					{/if}
+				</button>
+				<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
+					{#if soundOn}
+						<Volume2 size={18} />
+					{:else}
+						<VolumeX size={18} />
+					{/if}
+				</button>
+			</div>
+			<button class="icon-btn" onclick={openDictionary} aria-label="Open Dictionary">
+				<BookOpen size={18} />
 			</button>
-			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
-				{#if soundOn}
-					<Volume2 size={18} />
-				{:else}
-					<VolumeX size={18} />
-				{/if}
+			<button class="icon-btn" onclick={openLeaderboard} aria-label="Open Leaderboard">
+				<Trophy size={18} />
 			</button>
 		</div>
-	</div>
-
-	<div class="stats-center">
-		<span class="score-text {isDeducting ? 'deducting' : ''}">{displayScore}</span>
-		{#if streak > 0}
-			<span class="streak-text animate-streak-pulse">×{streak}</span>
-		{/if}
-	</div>
-
-	<div class="nav-section nav-right">
-		<div class="desktop-actions">
-			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleTheme} aria-label="Toggle Theme">
-				{#if isLight}
-					<Moon size={18} />
-				{:else}
-					<Sun size={18} />
-				{/if}
-			</button>
-			<button class="icon-btn" onpointerdown={(e) => e.preventDefault()} onclick={toggleAudio} aria-label="Toggle Sound">
-				{#if soundOn}
-					<Volume2 size={18} />
-				{:else}
-					<VolumeX size={18} />
-				{/if}
-			</button>
-		</div>
-		<button class="icon-btn" onclick={openDictionary} aria-label="Open Dictionary">
-			<BookOpen size={18} />
-		</button>
-		<button class="icon-btn" onclick={openLeaderboard} aria-label="Open Leaderboard">
-			<Trophy size={18} />
-		</button>
 	</div>
 </header>
 
@@ -163,10 +165,9 @@
 	.navbar-header {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
+		justify-content: center;
 		height: 48px;
 		border-bottom: 1px solid var(--border);
-		padding: 0 20px;
 		width: 100%;
 		flex-shrink: 0;
 		position: sticky;
@@ -175,6 +176,17 @@
 		background: color-mix(in srgb, var(--bg) 80%, transparent);
 		backdrop-filter: blur(8px);
 		-webkit-backdrop-filter: blur(8px);
+	}
+
+	.navbar-content {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		max-width: 640px;
+		height: 100%;
+		padding: 0 20px;
+		margin: 0 auto;
 	}
 
 	.nav-section {
@@ -194,7 +206,7 @@
 
 	.brand {
 		font-family: var(--font-mono);
-		font-size: 0.88rem;
+		font-size: 0.78rem;
 		font-weight: 700;
 		letter-spacing: 0.02em;
 		color: var(--text-primary);
@@ -279,6 +291,9 @@
 	@media (max-width: 640px) {
 		.navbar-header {
 			height: 52px;
+		}
+
+		.navbar-content {
 			padding: 0 16px;
 		}
 

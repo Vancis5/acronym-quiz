@@ -5,12 +5,14 @@
 
 	let {
 		isOpen = false,
+		highlightId = '',
 		close
 	}: {
 		isOpen?: boolean;
 		currentScore?: number;
 		maxStreak?: number;
 		accuracy?: number;
+		highlightId?: string;
 		close: () => void;
 	} = $props();
 
@@ -36,6 +38,14 @@
 			const data = (await res.json()) as { success: boolean; leaderboard: LeaderboardEntry[] };
 			if (data.success) {
 				leaderboard = data.leaderboard;
+				if (highlightId) {
+					setTimeout(() => {
+						const highlightedEl = document.querySelector('.list-row.highlighted-row');
+						if (highlightedEl) {
+							highlightedEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+						}
+					}, 120);
+				}
 			}
 		} catch (err) {
 			console.error('Failed to fetch leaderboard:', err);
@@ -80,10 +90,18 @@
 					</div>
 				{:else}
 					{#each leaderboard as rank, i}
-						<div class="list-row {i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : i === 2 ? 'rank-bronze' : ''}">
+						{@const isHighlighted = !!highlightId && rank.id === highlightId}
+						<div
+							class="list-row {i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : i === 2 ? 'rank-bronze' : ''} {isHighlighted ? 'highlighted-row' : ''}"
+						>
 							<div class="rank-pos">#{i + 1}</div>
 							<div class="rank-info">
-								<span class="player-name">{rank.name}</span>
+								<div class="player-name-row">
+									<span class="player-name">{rank.name}</span>
+									{#if isHighlighted}
+										<span class="you-badge">YOU</span>
+									{/if}
+								</div>
 								<span class="stats-text">{rank.max_streak} streak · {rank.accuracy}% acc</span>
 							</div>
 							<div class="score-val">{rank.score}</div>
@@ -120,8 +138,8 @@
 		border-radius: var(--radius-lg);
 		display: flex;
 		flex-direction: column;
-		padding: 24px;
-		gap: 16px;
+		padding: 28px 30px;
+		gap: 18px;
 	}
 
 	.sheet-header {
@@ -198,8 +216,8 @@
 		display: flex;
 		align-items: center;
 		border-bottom: 1px solid var(--border);
-		padding: 10px 0;
-		gap: 16px;
+		padding: 12px 10px;
+		gap: 18px;
 	}
 
 	.rank-pos {
@@ -280,6 +298,40 @@
 		flex-direction: column;
 	}
 
+	.player-name-row {
+		display: flex;
+		align-items: center;
+		gap: 6px;
+	}
+
+	.you-badge {
+		font-family: var(--font-mono);
+		font-size: 0.65rem;
+		font-weight: 700;
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		background: color-mix(in srgb, var(--yellow) 22%, transparent);
+		color: var(--yellow-text);
+		padding: 1px 5px;
+		border-radius: 4px;
+		line-height: 1.3;
+	}
+
+	:global(:root.light) .you-badge {
+		background: color-mix(in srgb, var(--yellow) 28%, transparent);
+		color: var(--yellow-text);
+	}
+
+	.list-row.highlighted-row {
+		background: color-mix(in srgb, var(--yellow) 10%, transparent);
+		border-radius: var(--radius-sm);
+		border-bottom-color: transparent;
+	}
+
+	:global(:root.light) .list-row.highlighted-row {
+		background: color-mix(in srgb, var(--yellow) 16%, transparent);
+	}
+
 	.player-name {
 		font-size: 0.85rem;
 		font-weight: 600;
@@ -303,11 +355,16 @@
 		}
 
 		.sheet-container {
-			padding: 20px 16px;
+			padding: 22px 18px;
 			height: 85dvh;
 			max-height: 620px;
 			gap: 14px;
 			border-radius: var(--radius);
+		}
+
+		.list-row {
+			padding: 11px 6px;
+			gap: 14px;
 		}
 	}
 </style>

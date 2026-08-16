@@ -31,12 +31,55 @@
 		})
 	);
 
+	let scrollContainer = $state<HTMLElement | null>(null);
+	let isDragging = $state(false);
+	let startX = 0;
+	let scrollStart = 0;
+	let hasMoved = false;
+
 	function handleOverlayClick(e: MouseEvent) {
 		if (e.target === e.currentTarget) {
 			close();
 		}
 	}
+
+	function handleMouseDown(e: MouseEvent) {
+		if (!scrollContainer) return;
+		isDragging = true;
+		hasMoved = false;
+		startX = e.clientX;
+		scrollStart = scrollContainer.scrollLeft;
+	}
+
+	function handleMouseMove(e: MouseEvent) {
+		if (!isDragging || !scrollContainer) return;
+		const walk = e.clientX - startX;
+		if (Math.abs(walk) > 4) {
+			hasMoved = true;
+		}
+		scrollContainer.scrollLeft = scrollStart - walk;
+	}
+
+	function handleMouseUp() {
+		if (!isDragging) return;
+		isDragging = false;
+	}
+
+	function handleWheel(e: WheelEvent) {
+		if (!scrollContainer) return;
+		if (e.deltaY !== 0 && e.deltaX === 0) {
+			e.preventDefault();
+			scrollContainer.scrollLeft += e.deltaY;
+		}
+	}
+
+	function handleChipClick(cat: string) {
+		if (hasMoved) return;
+		selectedCategory = cat;
+	}
 </script>
+
+<svelte:window onmousemove={handleMouseMove} onmouseup={handleMouseUp} />
 
 {#if isOpen}
 	<div
@@ -62,11 +105,17 @@
 				bind:value={searchQuery}
 			/>
 
-			<div class="category-scroll">
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<div
+				class="category-scroll {isDragging ? 'is-dragging' : ''}"
+				bind:this={scrollContainer}
+				onmousedown={handleMouseDown}
+				onwheel={handleWheel}
+			>
 				{#each categories as cat}
 					<button
 						class="cat-chip {selectedCategory === cat ? 'active' : ''} cat-{cat.toLowerCase()}"
-						onclick={() => (selectedCategory = cat)}
+						onclick={() => handleChipClick(cat)}
 					>
 						{cat}
 					</button>
@@ -174,6 +223,15 @@
 		-ms-overflow-style: none;
 		padding-bottom: 4px;
 		flex-shrink: 0;
+		cursor: grab;
+		user-select: none;
+		touch-action: pan-x;
+		overscroll-behavior-x: contain;
+	}
+
+	.category-scroll.is-dragging {
+		cursor: grabbing;
+		scroll-behavior: auto;
 	}
 
 	.category-scroll::-webkit-scrollbar {
@@ -188,7 +246,7 @@
 		padding: 6px 12px;
 		font-size: 0.75rem;
 		font-weight: 600;
-		cursor: pointer;
+		cursor: inherit;
 		white-space: nowrap;
 		flex-shrink: 0;
 		transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;

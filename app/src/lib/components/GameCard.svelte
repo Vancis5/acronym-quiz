@@ -356,7 +356,7 @@
 		align-items: flex-start;
 		margin-bottom: 20px;
 		border-left: 2px solid var(--border-strong);
-		padding-left: 14px;
+		padding: 0 60px 0 14px;
 	}
 
 	.info-log {
@@ -590,7 +590,7 @@
 		.info-zone {
 			min-height: 56px;
 			margin-bottom: 14px;
-			padding-left: 12px;
+			padding: 0 0 0 12px;
 		}
 
 		.action-row {

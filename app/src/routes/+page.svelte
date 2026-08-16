@@ -14,17 +14,20 @@
 	function getInitialStorage() {
 		let mastered = new Set<number>();
 		let username = '';
+		let lastSubmissionId = '';
 		if (typeof window !== 'undefined') {
 			try {
 				const savedMastered = localStorage.getItem('philnits_mastered');
 				if (savedMastered) mastered = new Set(JSON.parse(savedMastered));
 				const name = localStorage.getItem('philnits_username');
 				if (name) username = name;
+				const savedLastId = localStorage.getItem('philnits_last_submission_id');
+				if (savedLastId) lastSubmissionId = savedLastId;
 			} catch (e) {
 				console.warn('LocalStorage unavailable:', e);
 			}
 		}
-		return { mastered, username };
+		return { mastered, username, lastSubmissionId };
 	}
 
 	function getNextQuestionIndex(
@@ -105,6 +108,7 @@
 	let totalAnswered = $state(0);
 	let correctAnswered = $state(0);
 	let masteredIds = $state(initialData.mastered);
+	let lastSubmissionId = $state(initialData.lastSubmissionId);
 
 	let showLeaderboard = $state(false);
 	let showDictionary = $state(false);
@@ -202,7 +206,7 @@
 
 		// Always upload round score & performance to leaderboard
 		try {
-			await fetch('/api/leaderboard', {
+			const res = await fetch('/api/leaderboard', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -212,6 +216,11 @@
 					accuracy: Math.round(accuracy)
 				})
 			});
+			const data = (await res.json()) as { success?: boolean; entry?: { id?: string } };
+			if (data?.success && data?.entry?.id) {
+				lastSubmissionId = data.entry.id;
+				try { localStorage.setItem('philnits_last_submission_id', data.entry.id); } catch (e) {}
+			}
 		} catch (e) {}
 
 		// Advance round and rotate previous round exclusion
@@ -307,6 +316,7 @@
 		currentScore={score}
 		{maxStreak}
 		{accuracy}
+		highlightId={lastSubmissionId}
 		close={() => (showLeaderboard = false)}
 	/>
 
