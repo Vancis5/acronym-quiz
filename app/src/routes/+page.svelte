@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import GameCard from '$lib/components/GameCard.svelte';
 	import LeaderboardSheet from '$lib/components/LeaderboardSheet.svelte';
@@ -12,92 +11,57 @@
 
 	const ROUND_SIZE = 10;
 
-	let currentItemIndex = $state(0);
-	let score = $state(0);
-	let streak = $state(0);
-	let maxStreak = $state(0);
-	let totalAnswered = $state(0);
-	let correctAnswered = $state(0);
-	let masteredIds = $state(new Set<number>());
-
-	let showLeaderboard = $state(false);
-	let showDictionary = $state(false);
-	let showRoundComplete = $state(false);
-
-	// Round tracking
-	let roundAnswered = $state(0);
-	let roundCorrect = $state(0);
-	let savedUsername = $state('');
-
-	// In-memory round scheduling (resets on page refresh)
-	let currentRoundNumber = $state(1);
-	let currentRoundAcronymIds = $state<Set<number>>(new Set());
-	let previousRoundAcronymIds = $state<Set<number>>(new Set());
-	let lastSeenRound = $state<Map<number, number>>(new Map());
-
-	let currentItem = $derived(ACRONYMS[currentItemIndex]);
-	let accuracy = $derived(totalAnswered > 0 ? (correctAnswered / totalAnswered) * 100 : 0);
-	let multiplier = $derived(streak >= 10 ? 3 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1);
-
-	onMount(() => {
-		loadLocalStorage();
-		pickNextQuestion();
-	});
-
-	function loadLocalStorage() {
-		try {
-			const savedMastered = localStorage.getItem('philnits_mastered');
-			if (savedMastered) {
-				masteredIds = new Set(JSON.parse(savedMastered));
+	function getInitialStorage() {
+		let mastered = new Set<number>();
+		let username = '';
+		if (typeof window !== 'undefined') {
+			try {
+				const savedMastered = localStorage.getItem('philnits_mastered');
+				if (savedMastered) mastered = new Set(JSON.parse(savedMastered));
+				const name = localStorage.getItem('philnits_username');
+				if (name) username = name;
+			} catch (e) {
+				console.warn('LocalStorage unavailable:', e);
 			}
-			const name = localStorage.getItem('philnits_username');
-			if (name) savedUsername = name;
-		} catch (e) {
-			console.warn('LocalStorage unavailable:', e);
 		}
+		return { mastered, username };
 	}
 
-	function saveMastered() {
-		try {
-			localStorage.setItem('philnits_mastered', JSON.stringify([...masteredIds]));
-		} catch (e) {}
-	}
-
-	function pickNextQuestion() {
-		// 1. Exclude acronyms from the current round and previous round
+	function getNextQuestionIndex(
+		currentRound: Set<number>,
+		prevRound: Set<number>,
+		lastSeen: Map<number, number>,
+		mastered: Set<number>,
+		roundNum: number,
+		currentId?: number
+	): number {
 		let eligible = ACRONYMS.filter(
-			(a) => !currentRoundAcronymIds.has(a.id) && !previousRoundAcronymIds.has(a.id)
+			(a) => !currentRound.has(a.id) && !prevRound.has(a.id)
 		);
 
-		// Fallback if pool is exhausted
 		if (eligible.length === 0) {
-			eligible = ACRONYMS.filter((a) => !currentRoundAcronymIds.has(a.id));
+			eligible = ACRONYMS.filter((a) => !currentRound.has(a.id));
 		}
 		if (eligible.length === 0) {
 			eligible = ACRONYMS;
 		}
 
-		// 2. Calculate selection weights:
-		// - Never seen in session: weight 5.0 (priority)
-		// - Seen rounds ago (>= 2): weight increases by +1 each round since last seen
-		// - Unmastered: 1.5x weight multiplier
 		const weighted = eligible.map((item) => {
 			let weight = 1;
-			if (!lastSeenRound.has(item.id)) {
+			if (!lastSeen.has(item.id)) {
 				weight = 5;
 			} else {
-				const roundsAgo = currentRoundNumber - (lastSeenRound.get(item.id) || 0);
+				const roundsAgo = roundNum - (lastSeen.get(item.id) || 0);
 				weight = Math.max(1, roundsAgo - 1);
 			}
 
-			if (!masteredIds.has(item.id)) {
+			if (!mastered.has(item.id)) {
 				weight *= 1.5;
 			}
 
 			return { item, weight };
 		});
 
-		// 3. Weighted roulette wheel selection
 		const totalWeight = weighted.reduce((sum, entry) => sum + entry.weight, 0);
 		let randomVal = Math.random() * totalWeight;
 		let selected = weighted[0].item;
@@ -110,14 +74,79 @@
 			randomVal -= entry.weight;
 		}
 
-		if (selected.id === currentItem?.id && eligible.length > 1) {
-			selected = eligible.find((a) => a.id !== currentItem.id) || selected;
+		if (currentId !== undefined && selected.id === currentId && eligible.length > 1) {
+			selected = eligible.find((a) => a.id !== currentId) || selected;
 		}
 
-		currentRoundAcronymIds.add(selected.id);
-		lastSeenRound.set(selected.id, currentRoundNumber);
+		return ACRONYMS.findIndex((a) => a.id === selected.id);
+	}
 
-		currentItemIndex = ACRONYMS.findIndex((a) => a.id === selected.id);
+	const initialData = getInitialStorage();
+	const initialRoundIds = new Set<number>();
+	const initialLastSeen = new Map<number, number>();
+
+	const initialIdx = getNextQuestionIndex(
+		initialRoundIds,
+		new Set<number>(),
+		initialLastSeen,
+		initialData.mastered,
+		1
+	);
+
+	const initialItem = ACRONYMS[initialIdx];
+	if (initialItem) {
+		initialRoundIds.add(initialItem.id);
+		initialLastSeen.set(initialItem.id, 1);
+	}
+
+	let score = $state(0);
+	let streak = $state(0);
+	let maxStreak = $state(0);
+	let totalAnswered = $state(0);
+	let correctAnswered = $state(0);
+	let masteredIds = $state(initialData.mastered);
+
+	let showLeaderboard = $state(false);
+	let showDictionary = $state(false);
+	let showRoundComplete = $state(false);
+
+	// Round tracking
+	let roundAnswered = $state(0);
+	let roundCorrect = $state(0);
+	let savedUsername = $state(initialData.username);
+
+	// In-memory round scheduling (resets on page refresh)
+	let currentRoundNumber = $state(1);
+	let currentRoundAcronymIds = $state<Set<number>>(initialRoundIds);
+	let previousRoundAcronymIds = $state<Set<number>>(new Set());
+	let lastSeenRound = $state<Map<number, number>>(initialLastSeen);
+	let currentItemIndex = $state(initialIdx);
+
+	let currentItem = $derived(ACRONYMS[currentItemIndex]);
+	let accuracy = $derived(totalAnswered > 0 ? (correctAnswered / totalAnswered) * 100 : 0);
+	let multiplier = $derived(streak >= 10 ? 3 : streak >= 5 ? 2 : streak >= 3 ? 1.5 : 1);
+
+	function saveMastered() {
+		try {
+			localStorage.setItem('philnits_mastered', JSON.stringify([...masteredIds]));
+		} catch (e) {}
+	}
+
+	function pickNextQuestion() {
+		const nextIdx = getNextQuestionIndex(
+			currentRoundAcronymIds,
+			previousRoundAcronymIds,
+			lastSeenRound,
+			masteredIds,
+			currentRoundNumber,
+			currentItem?.id
+		);
+		const selected = ACRONYMS[nextIdx];
+		if (selected) {
+			currentRoundAcronymIds.add(selected.id);
+			lastSeenRound.set(selected.id, currentRoundNumber);
+		}
+		currentItemIndex = nextIdx;
 	}
 
 	function handleAnswer(detail: { status: GradeStatus; correct: boolean; points: number }) {

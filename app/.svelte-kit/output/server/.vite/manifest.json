@@ -95,8 +95,14 @@
       "_index-server.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout.Cjww7VY0.css"
+      "_app/immutable/assets/_layout.DPAooM9z.css"
     ]
+  },
+  "src/routes/+layout.ts": {
+    "file": "entries/pages/_layout.ts.js",
+    "name": "entries/pages/_layout.ts",
+    "src": "src/routes/+layout.ts",
+    "isEntry": true
   },
   "src/routes/+page.svelte": {
     "file": "entries/pages/_page.svelte.js",
@@ -107,7 +113,7 @@
       "_index-server.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.CGTo5iqg.css"
+      "_app/immutable/assets/_page.BNMW7rqo.css"
     ]
   },
   "src/routes/api/leaderboard/+server.ts": {

@@ -7,10 +7,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["p5.min.js","robots.txt","three.r134.min.js","vanta.cells.min.js","vanta.topology.min.js"]),
-	mimeTypes: {".js":"text/javascript",".txt":"text/plain"},
+	assets: new Set(["og-preview.jpg","p5.min.js","robots.txt","sitemap.xml","three.r134.min.js","vanta.cells.min.js","vanta.topology.min.js"]),
+	mimeTypes: {".jpg":"image/jpeg",".js":"text/javascript",".txt":"text/plain",".xml":"text/xml"},
 	_: {
-		client: {start:"_app/immutable/entry/start.C92TwPRa.js",app:"_app/immutable/entry/app.DJpEuplh.js",imports:["_app/immutable/entry/start.C92TwPRa.js","_app/immutable/chunks/UO8ayoEp.js","_app/immutable/chunks/DJ624bz3.js","_app/immutable/entry/app.DJpEuplh.js","_app/immutable/chunks/DJ624bz3.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
+		client: {start:"_app/immutable/entry/start.-yDNfqsL.js",app:"_app/immutable/entry/app.C-KP4lNm.js",imports:["_app/immutable/entry/start.-yDNfqsL.js","_app/immutable/chunks/RkkYeFlx.js","_app/immutable/chunks/CVbHDDU-.js","_app/immutable/entry/app.C-KP4lNm.js","_app/immutable/chunks/CVbHDDU-.js","_app/immutable/chunks/xihTtKlq.js"],stylesheets:[],fonts:[],uses_env_dynamic_public:false},
 		nodes: [
 			__memo(() => import('../output/server/nodes/0.js')),
 			__memo(() => import('../output/server/nodes/1.js')),
