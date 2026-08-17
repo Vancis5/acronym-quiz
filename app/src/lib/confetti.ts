@@ -14,6 +14,7 @@ interface Particle {
 
 let globalParticles: Particle[] = [];
 let isAnimating = false;
+let lastTime = 0;
 
 export function triggerConfettiBurst(count = 60) {
 	if (typeof window === 'undefined') return;
@@ -60,23 +61,29 @@ export function triggerConfettiBurst(count = 60) {
 
 	if (!isAnimating) {
 		isAnimating = true;
-		render(canvas, ctx);
+		lastTime = performance.now();
+		requestAnimationFrame((time) => render(canvas!, ctx!, time));
 	}
 }
 
-function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, now: number) {
+	const dt = lastTime ? Math.min((now - lastTime) / (1000 / 60), 3) : 1;
+	lastTime = now;
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 
 	// Remove dead particles
 	globalParticles = globalParticles.filter(p => p.alpha > 0);
 
+	const friction = Math.pow(0.98, dt);
+
 	globalParticles.forEach((p) => {
-		p.x += p.vx;
-		p.y += p.vy;
-		p.vy += 0.45; // Gravity
-		p.vx *= 0.98;
-		p.alpha -= 0.015;
-		p.rotation += p.vRot;
+		p.x += p.vx * dt;
+		p.y += p.vy * dt;
+		p.vy += 0.45 * dt; // Gravity
+		p.vx *= friction;
+		p.alpha -= 0.015 * dt;
+		p.rotation += p.vRot * dt;
 
 		ctx.save();
 		ctx.globalAlpha = Math.max(0, p.alpha);
@@ -88,9 +95,10 @@ function render(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
 	});
 
 	if (globalParticles.length > 0) {
-		requestAnimationFrame(() => render(canvas, ctx));
+		requestAnimationFrame((time) => render(canvas, ctx, time));
 	} else {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		isAnimating = false;
+		lastTime = 0;
 	}
 }
