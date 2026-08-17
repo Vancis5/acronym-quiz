@@ -21,6 +21,7 @@
 	let resultStatus = $state<GradeStatus | null>(null);
 	let isShaking = $state(false);
 	let hintLevel = $state(0);
+	let inputElement = $state<HTMLInputElement | null>(null);
 
 	let cleanAcronym = $derived(item.acronym.trim());
 	let cleanMeaning = $derived(item.meaning.trim());
@@ -39,8 +40,7 @@
 	});
 
 	function focusInput() {
-		const el = document.getElementById('meaning-text-input');
-		if (el) (el as HTMLInputElement).focus({ preventScroll: true });
+		if (inputElement) inputElement.focus({ preventScroll: true });
 	}
 
 	function checkAnswer() {
@@ -165,6 +165,8 @@
 	<div class="action-row">
 		<input
 			id="meaning-text-input"
+			bind:this={inputElement}
+			aria-label="Enter acronym meaning"
 			type="text"
 			class="meaning-input {isSubmitted && resultStatus ? resultStatus : ''}"
 			placeholder="Enter meaning..."

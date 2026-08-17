@@ -9,9 +9,6 @@
 		close
 	}: {
 		isOpen?: boolean;
-		currentScore?: number;
-		maxStreak?: number;
-		accuracy?: number;
 		highlightId?: string;
 		close: () => void;
 	} = $props();
@@ -68,7 +65,7 @@
 		role="button"
 		tabindex="0"
 		onclick={handleOverlayClick}
-		onkeydown={(e) => e.key === 'Escape' && close()}
+		onkeydown={(e) => (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') && close()}
 	>
 		<div class="sheet-container" transition:fly={{ y: 8, duration: 200 }}>
 			<div class="sheet-header">
@@ -89,7 +86,7 @@
 						<div class="spinner"></div>
 					</div>
 				{:else}
-					{#each leaderboard as rank, i}
+					{#each leaderboard as rank, i (rank.id)}
 						{@const isHighlighted = !!highlightId && rank.id === highlightId}
 						<div
 							class="list-row {i === 0 ? 'rank-gold' : i === 1 ? 'rank-silver' : i === 2 ? 'rank-bronze' : ''} {isHighlighted ? 'highlighted-row' : ''}"

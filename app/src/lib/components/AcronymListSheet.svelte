@@ -88,7 +88,7 @@
 		role="button"
 		tabindex="0"
 		onclick={handleOverlayClick}
-		onkeydown={(e) => e.key === 'Escape' && close()}
+		onkeydown={(e) => (e.key === 'Escape' || e.key === 'Enter' || e.key === ' ') && close()}
 	>
 		<div class="sheet-container" transition:fly={{ y: 8, duration: 200 }}>
 			<div class="sheet-header">
@@ -103,6 +103,7 @@
 				type="text"
 				placeholder="Search acronym or meaning..."
 				bind:value={searchQuery}
+				aria-label="Search acronyms"
 			/>
 
 			<!-- svelte-ignore a11y_no_static_element_interactions -->
@@ -112,7 +113,7 @@
 				onmousedown={handleMouseDown}
 				onwheel={handleWheel}
 			>
-				{#each categories as cat}
+				{#each categories as cat (cat)}
 					<button
 						class="cat-chip {selectedCategory === cat ? 'active' : ''} cat-{cat.toLowerCase()}"
 						onclick={() => handleChipClick(cat)}
@@ -123,7 +124,7 @@
 			</div>
 
 			<div class="list-wrapper">
-				{#each filteredList as item}
+				{#each filteredList as item (item.id)}
 					<div class="list-row">
 						<div class="acronym-col">
 							<span class="acronym-code">{item.acronym}</span>

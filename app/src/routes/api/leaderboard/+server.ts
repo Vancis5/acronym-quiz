@@ -67,29 +67,11 @@ async function ensureLeaderboardTable(db: D1Database): Promise<void> {
 async function getNextGuestUsername(db: D1Database): Promise<string> {
 	try {
 		await ensureLeaderboardTable(db);
-		const { results } = await db
-			.prepare("SELECT name FROM leaderboard WHERE name LIKE 'user_%'")
-			.all<{ name: string }>();
-
-		let maxIndex = 0;
-		let foundAny = false;
-		if (results && results.length > 0) {
-			for (const row of results) {
-				const match = row.name?.match(/^user_(\d+)$/);
-				if (match) {
-					foundAny = true;
-					const num = parseInt(match[1], 10);
-					if (!isNaN(num) && num > maxIndex) {
-						maxIndex = num;
-					}
-				}
-			}
-		}
-
-		if (foundAny) {
-			return `user_${maxIndex + 1}`;
-		}
-		return getNextFallbackGuestUsername();
+		const result = await db
+			.prepare("SELECT MAX(CAST(SUBSTR(name, 6) AS INTEGER)) as max_idx FROM leaderboard WHERE name LIKE 'user_%'")
+			.first<{ max_idx: number | null }>();
+		const maxIndex = result?.max_idx ?? 0;
+		return `user_${maxIndex + 1}`;
 	} catch (e) {
 		return getNextFallbackGuestUsername();
 	}
@@ -157,12 +139,16 @@ export const POST: RequestHandler = async ({ request, platform }) => {
 			}
 		}
 
+		const safeScore = typeof score === 'number' && isFinite(score) ? score : 0;
+		const safeStreak = typeof max_streak === 'number' && isFinite(max_streak) ? max_streak : 0;
+		const safeAccuracy = typeof accuracy === 'number' && isFinite(accuracy) ? accuracy : 0;
+
 		const entry: LeaderboardEntry = {
 			id: crypto.randomUUID(),
 			name: name.slice(0, 20),
-			score: Math.max(0, Math.floor(score)),
-			max_streak: Math.max(0, Math.floor(max_streak)),
-			accuracy: Math.min(100, Math.max(0, Math.round((accuracy || 0) * 10) / 10)),
+			score: Math.max(0, Math.floor(safeScore)),
+			max_streak: Math.max(0, Math.floor(safeStreak)),
+			accuracy: Math.min(100, Math.max(0, Math.round(safeAccuracy * 10) / 10)),
 			created_at: new Date().toISOString()
 		};
 

@@ -40,6 +40,7 @@ export function playPopSound() {
 
 	osc.connect(gain);
 	gain.connect(context.destination);
+	osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 	osc.start();
 	osc.stop(context.currentTime + 0.06);
@@ -66,6 +67,7 @@ export function playCorrectSound(streak = 1) {
 
 		osc.connect(gain);
 		gain.connect(context.destination);
+		osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 		osc.start(now + i * 0.05);
 		osc.stop(now + i * 0.05 + 0.25);
@@ -92,6 +94,7 @@ export function playCloseSound() {
 
 		osc.connect(gain);
 		gain.connect(context.destination);
+		osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 		osc.start(now + i * 0.08);
 		osc.stop(now + i * 0.08 + 0.22);
@@ -118,6 +121,7 @@ export function playAlmostSound() {
 
 		osc.connect(gain);
 		gain.connect(context.destination);
+		osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 		osc.start(now + i * 0.07);
 		osc.stop(now + i * 0.07 + 0.2);
@@ -143,6 +147,7 @@ export function playWrongSound() {
 
 	osc.connect(gain);
 	gain.connect(context.destination);
+	osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 	osc.start(now);
 	osc.stop(now + 0.2);
@@ -168,6 +173,7 @@ export function playStreakBonusSound() {
 
 		osc.connect(gain);
 		gain.connect(context.destination);
+		osc.onended = () => { osc.disconnect(); gain.disconnect(); };
 
 		osc.start(now + index * 0.07);
 		osc.stop(now + index * 0.07 + 0.35);

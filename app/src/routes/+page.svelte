@@ -313,9 +313,6 @@
 
 	<LeaderboardSheet
 		isOpen={showLeaderboard}
-		currentScore={score}
-		{maxStreak}
-		{accuracy}
 		highlightId={lastSubmissionId}
 		close={() => (showLeaderboard = false)}
 	/>

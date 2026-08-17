@@ -28,7 +28,7 @@ function levenshtein(a: string, b: string): number {
 	return matrix[b.length][a.length];
 }
 
-const FILLER_WORDS = new Set(['and', 'or', 'of', 'the', 'for', 'in', 'to', 'a', 'an', '&']);
+const FILLER_WORDS = new Set(['and', 'or', 'the', 'a', 'an', '&']);
 
 function normalizeStrict(str: string): string {
 	return str.toLowerCase().replace(/[^a-z0-9]/g, '');

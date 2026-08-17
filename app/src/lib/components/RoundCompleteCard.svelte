@@ -20,14 +20,14 @@
 	} = $props();
 
 	let username = $state('');
+	let inputElement = $state<HTMLInputElement | null>(null);
 
 	$effect(() => {
 		username = savedUsername;
 	});
 
 	onMount(() => {
-		const el = document.getElementById('round-username-input');
-		if (el) (el as HTMLInputElement).focus({ preventScroll: true });
+		if (inputElement) inputElement.focus({ preventScroll: true });
 	});
 
 	function handleContinue() {
@@ -74,6 +74,8 @@
 	<div class="action-row">
 		<input
 			id="round-username-input"
+			bind:this={inputElement}
+			aria-label="Enter username"
 			type="text"
 			class="username-input"
 			placeholder="username (optional)"
