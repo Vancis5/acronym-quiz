@@ -1,44 +1,51 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover" />
-		<meta name="text-scale" content="scale" />
 
-		<!-- Primary SEO -->
-		<title>PhilNITS Acronym Blitz — IT Acronym Quiz</title>
-		<meta name="description" content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
-		<meta name="keywords" content="PhilNITS, IT acronyms, acronym quiz, NITS exam, Philippines IT certification, flashcard quiz, networking acronyms, security acronyms" />
-		<meta name="author" content="PhilNITS Acronym Blitz" />
-		<meta name="robots" content="index, follow" />
-		<link rel="canonical" href="https://acronymquiz.pages.dev/" />
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport"
+		content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, interactive-widget=resizes-content, viewport-fit=cover" />
+	<meta name="text-scale" content="scale" />
 
-		<!-- Theme -->
-		<meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
-		<meta name="theme-color" content="#f0ede8" media="(prefers-color-scheme: light)" />
-		<meta name="color-scheme" content="dark light" />
+	<!-- Primary SEO -->
+	<title>philnits acronym blitz</title>
+	<meta name="description"
+		content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
+	<meta name="keywords"
+		content="PhilNITS, IT acronyms, acronym quiz, NITS exam, Philippines IT certification, flashcard quiz, networking acronyms, security acronyms" />
+	<meta name="author" content="PhilNITS Acronym Blitz" />
+	<meta name="robots" content="index, follow" />
+	<link rel="canonical" href="https://acronymquiz.pages.dev/" />
 
-		<!-- Open Graph -->
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://acronymquiz.pages.dev/" />
-		<meta property="og:title" content="PhilNITS Acronym Blitz — IT Acronym Quiz" />
-		<meta property="og:description" content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
-		<meta property="og:image" content="https://acronymquiz.pages.dev/og-preview.png" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
-		<meta property="og:image:alt" content="PhilNITS Acronym Blitz — Master 100+ IT Acronyms with streaks and leaderboard" />
-		<meta property="og:site_name" content="PhilNITS Acronym Blitz" />
-		<meta property="og:locale" content="en_PH" />
+	<!-- Theme -->
+	<meta name="theme-color" content="#1a1a1a" media="(prefers-color-scheme: dark)" />
+	<meta name="theme-color" content="#f0ede8" media="(prefers-color-scheme: light)" />
+	<meta name="color-scheme" content="dark light" />
 
-		<!-- Twitter Card -->
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta name="twitter:title" content="PhilNITS Acronym Blitz — IT Acronym Quiz" />
-		<meta name="twitter:description" content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
-		<meta name="twitter:image" content="https://acronymquiz.pages.dev/og-preview.png" />
-		<meta name="twitter:image:alt" content="PhilNITS Acronym Blitz quiz preview" />
+	<!-- Open Graph -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://acronymquiz.pages.dev/" />
+	<meta property="og:title" content="PhilNITS Acronym Blitz" />
+	<meta property="og:description"
+		content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
+	<meta property="og:image" content="https://acronymquiz.pages.dev/og-preview.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt"
+		content="PhilNITS Acronym Blitz — Master 100+ IT Acronyms with streaks and leaderboard" />
+	<meta property="og:site_name" content="PhilNITS Acronym Blitz" />
+	<meta property="og:locale" content="en_PH" />
 
-		<!-- JSON-LD Structured Data -->
-		<script type="application/ld+json">
+	<!-- Twitter Card -->
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta name="twitter:title" content="philnits acronym blitz" />
+	<meta name="twitter:description"
+		content="Master PhilNITS IT acronyms with a fast flashcard quiz. Test your speed, track streaks, and climb the live leaderboard with 100+ terms." />
+	<meta name="twitter:image" content="https://acronymquiz.pages.dev/og-preview.png" />
+	<meta name="twitter:image:alt" content="PhilNITS Acronym Blitz quiz preview" />
+
+	<!-- JSON-LD Structured Data -->
+	<script type="application/ld+json">
 		{
 			"@context": "https://schema.org",
 			"@type": "WebApplication",
@@ -61,33 +68,35 @@
 		}
 		</script>
 
-		<!-- Theme init (FOUC prevention) -->
-		<script>
-			(function() {
-				try {
-					var saved = localStorage.getItem('philnits_theme');
-					var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
-					if (saved === 'light' || (!saved && prefersLight)) {
-						document.documentElement.classList.add('light');
-					} else {
-						document.documentElement.classList.remove('light');
-					}
-				} catch (e) {}
-			})();
-		</script>
-		<script>
-			document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
-			document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
-			document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
-			document.addEventListener('touchmove', (e) => {
-				if (e.touches.length > 1) e.preventDefault();
-			}, { passive: false });
-		</script>
-		<script src="/three.r134.min.js" defer></script>
-		<script src="/vanta.cells.min.js" defer></script>
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+	<!-- Theme init (FOUC prevention) -->
+	<script>
+		(function () {
+			try {
+				var saved = localStorage.getItem('philnits_theme');
+				var prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+				if (saved === 'light' || (!saved && prefersLight)) {
+					document.documentElement.classList.add('light');
+				} else {
+					document.documentElement.classList.remove('light');
+				}
+			} catch (e) { }
+		})();
+	</script>
+	<script>
+		document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+		document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+		document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
+		document.addEventListener('touchmove', (e) => {
+			if (e.touches.length > 1) e.preventDefault();
+		}, { passive: false });
+	</script>
+	<script src="/three.r134.min.js" defer></script>
+	<script src="/vanta.cells.min.js" defer></script>
+	%sveltekit.head%
+</head>
+
+<body data-sveltekit-preload-data="hover">
+	<div style="display: contents">%sveltekit.body%</div>
+</body>
+
 </html>
